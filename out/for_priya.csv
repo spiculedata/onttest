@@ -1,0 +1,38 @@
+item,check_id,check_title,entity,severity,for_priya,entity_key,source_tab,source_row,field,raw_value,message
+1,DV002,Every device is linked to a register machine,device,warning,true,ftx_5927a6bf,FieldTrax,,,Spare tracker 1,Device matches no machine on the register
+2,DV002,Every device is linked to a register machine,device,warning,true,ftx_b1d282cc,FieldTrax,,,Spare tracker 3,Device matches no machine on the register
+3,DV002,Every device is linked to a register machine,device,warning,true,ftx_c10c3e89,FieldTrax,,,Spare tracker 2,Device matches no machine on the register
+4,DV012,A tracker that matches no machine is not running,device,warning,true,ftx_5927a6bf,FieldTrax,,engine_hours,Spare tracker 1,Spare tracker 1 ran 28.0 h between 18 and 31 Oct (reporting since 22 Oct). It is fitted to a machine that is working.
+5,DV012,A tracker that matches no machine is not running,device,warning,true,ftx_b1d282cc,FieldTrax,,engine_hours,Spare tracker 3,Spare tracker 3 ran 21.3 h between 18 and 31 Oct (reporting since 22 Oct). It is fitted to a machine that is working.
+6,DV012,A tracker that matches no machine is not running,device,warning,true,ftx_c10c3e89,FieldTrax,,engine_hours,Spare tracker 2,Spare tracker 2 ran 15.3 h between 18 and 31 Oct (reporting since 22 Oct). It is fitted to a machine that is working.
+7,HR001,A hire line is not an exact copy of an earlier line,hire,warning,true,H-1014,Hires 25-26,15,,,Identical to row 14; is this one hire or two?
+8,HR016,Reading a date month-first would not change whether the hire is open,hire,warning,true,H-1015,Hires 25-26,4,start,2026-10-11,Start 11 Oct 2026 (Excel date); read month-first it is 10 Nov 2026 and the hire would not be open on 31 Oct.
+9,HR016,Reading a date month-first would not change whether the hire is open,hire,warning,true,H-1046,Hires 25-26,7,start,2026-03-11,Start 11 Mar 2026 (Excel date); read month-first it is 3 Nov 2026 and the hire would not be open on 31 Oct.
+10,HR016,Reading a date month-first would not change whether the hire is open,hire,warning,true,H-1010,Hires 25-26,36,off_hire,2026-11-10,Off-hire 10 Nov 2026 (Excel date); read month-first it is 11 Oct 2026 and the hire would not be open on 31 Oct.
+11,HR016,Reading a date month-first would not change whether the hire is open,hire,warning,true,H-1035,Hires 25-26,42,start,12/07/26,Start 12 Jul 2026 (typed d/m/y); read month-first it is 7 Dec 2026 and the hire would not be open on 31 Oct.
+12,HR016,Reading a date month-first would not change whether the hire is open,hire,warning,true,H-1042,Hires 25-26,48,start,2026-07-11,Start 11 Jul 2026 (Excel date); read month-first it is 7 Nov 2026 and the hire would not be open on 31 Oct.
+13,MC003,Every machine has a VIN,machine,warning,true,EX-06,NH Fleet,2,vin,,VIN blank; FieldTrax tracker on rego CL164X reports VIN AC6KD84NB3BJGE4YM
+14,MC003,Every machine has a VIN,machine,warning,true,LV-07,NH Fleet,14,vin,,VIN blank; FieldTrax tracker on rego GL197T reports VIN XDTSEJAC8P8JUF0PB
+15,MC003,Every machine has a VIN,machine,warning,true,TP-05,NH Fleet,25,vin,,VIN blank; FieldTrax tracker on rego AQ183S reports VIN BLK0TT4CWJ58R3HFJ
+16,MC003,Every machine has a VIN,machine,warning,true,SK-03,NH Fleet,37,vin,,VIN blank; FieldTrax tracker on rego DM172T reports VIN R5BWNX0CNYKZVFMMC
+17,MC009,Capital cost is a number,machine,warning,true,SK-01,BE Plant,23,capital_cost,TBC,Capital cost is not a number
+18,MC009,Capital cost is a number,machine,warning,true,RL-01,BE Plant,50,capital_cost,TBC,Capital cost is not a number
+19,MC012,A disposed machine was not built in the register's own year,machine,warning,true,SK-03,BE Plant,25,year/status,2026 / Disposed,Disposed in the same year as its Year column
+20,MC012,A disposed machine was not built in the register's own year,machine,warning,true,WC-03,BE Plant,32,year/status,2026 / Disposed,Disposed in the same year as its Year column
+21,MC014,Every working machine has a FieldTrax tracker,machine,warning,true,mch_whlgxb0zdftg0m0z1,BE Plant,46,,BE TP-10,BE TP-10 (on_project) has no FieldTrax device
+22,MC014,Every working machine has a FieldTrax tracker,machine,warning,true,mch_phya2f7974j2lm9rp,BE Plant,67,,BE GN-01,BE GN-01 (workshop) has no FieldTrax device
+23,MC014,Every working machine has a FieldTrax tracker,machine,warning,true,mch_4dsv1f53thmn1ncy8,BE Plant,68,,BE GN-02,BE GN-02 (available) has no FieldTrax device
+24,MC014,Every working machine has a FieldTrax tracker,machine,warning,true,mch_pwejcmb6j48juet25,BE Plant,69,,BE GN-03,BE GN-03 (on_project) has no FieldTrax device
+25,MC014,Every working machine has a FieldTrax tracker,machine,warning,true,mch_un809z456wru10w3v,NH Fleet,13,,NH TP-07,NH TP-07 (on_project) has no FieldTrax device
+26,MC014,Every working machine has a FieldTrax tracker,machine,warning,true,mch_7xb9335vsf0sgcymm,NH Fleet,15,,NH LV-02,NH LV-02 (on_project) has no FieldTrax device
+27,MC014,Every working machine has a FieldTrax tracker,machine,warning,true,mch_6ch8daxhab22y54ku,NH Fleet,18,,NH RL-01,NH RL-01 (on_project) has no FieldTrax device
+28,MC014,Every working machine has a FieldTrax tracker,machine,warning,true,mch_1ksvx6accm95xwa5h,NH Fleet,35,,NH GN-01,NH GN-01 (available) has no FieldTrax device
+29,MC014,Every working machine has a FieldTrax tracker,machine,warning,true,mch_hnfu9ck4nz0jyut66,NH Fleet,40,,NH GN-02,NH GN-02 (on_project) has no FieldTrax device
+30,MC015,An operator mobile belongs to one machine,machine,warning,true,SK-01,BE Plant,23,operator_mobile,0491 555 646,BE LV-03 and BE SK-01 share this operator mobile
+31,MC015,An operator mobile belongs to one machine,machine,warning,true,TP-10,BE Plant,46,operator_mobile,0491 555 341,BE LV-08 and BE TP-10 share this operator mobile
+32,MC015,An operator mobile belongs to one machine,machine,warning,true,LV-03,BE Plant,58,operator_mobile,0491 555 646,BE LV-03 and BE SK-01 share this operator mobile
+33,MC015,An operator mobile belongs to one machine,machine,warning,true,LV-08,BE Plant,63,operator_mobile,0491 555 341,BE LV-08 and BE TP-10 share this operator mobile
+34,VC001,Term mappings that are judgement calls or typo matches are confirmed,vocabulary,warning,true,Hire Well,Hires 25-26,25,domain,Hire Well,'Hire Well' read as supplier 'Hirewell Pty Ltd' by inferred alias on 5 line(s). Please confirm.
+35,VC001,Term mappings that are judgement calls or typo matches are confirmed,vocabulary,warning,true,On job,NH Fleet,2,domain,On job,'On job' read as status 'on_project' by inferred alias on 21 line(s). Please confirm.
+36,VC001,Term mappings that are judgement calls or typo matches are confirmed,vocabulary,warning,true,Repairs,NH Fleet,29,domain,Repairs,'Repairs' read as status 'workshop' by inferred alias on 4 line(s). Please confirm.
+37,WB009,Typed grand total equals the sum of all lines,workbook,warning,true,capital cost total,BE Plant,71,Capital cost,10276000,Typed 10276000.0 but lines sum to 10361000.0; typed subtotals sum to 10361000.0

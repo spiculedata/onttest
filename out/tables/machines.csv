@@ -1,0 +1,100 @@
+machine_id,business_code,owner_org_id,fleet_no,category,make,model,rego,vin,year,status,site_id,capital_cost_aud,previous_business_code,transfer_period,source_tab,source_row,source_refs,register_line_count
+mch_cps7rlgcurfr7m10s,BE,org_be,EX-01,Excavator 20t,Komatsu,PC210,BK101V,CPS7RLGCURFR7M10S,2016,on_project,site_toowoomba,309500.0,,,BE Plant,5,BE Plant!5,1
+mch_y601020htmc4ev1hs,BE,org_be,EX-02,Excavator 20t,Komatsu,PC210,DL102S,Y601020HTMC4EV1HS,2022,available,site_toowoomba,469000.0,,,BE Plant,6,BE Plant!6,1
+mch_9sfbs02rfynp65j9d,BE,org_be,EX-03,Excavator 20t,Komatsu,PC210,GQ103T,9SFBS02RFYNP65J9D,2014,workshop,site_brisbane_yard,326000.0,,,BE Plant,7,BE Plant!7,1
+mch_gaevn0szvnwryxm76,BE,org_be,EX-04,Excavator 20t,Komatsu,PC210,AK104S,GAEVN0SZVNWRYXM76,2018,on_project,site_brisbane_yard,422000.0,,,BE Plant,8,BE Plant!8,1
+mch_uekrwft3u6petp2le,BE,org_be,EX-05,Excavator 20t,Komatsu,PC210,FN105W,UEKRWFT3U6PETP2LE,2018,available,site_toowoomba,432000.0,,,BE Plant,9,BE Plant!9,1
+mch_3xrz2dcrhsysgtza0,BE,org_be,EX-06,Excavator 20t,Komatsu,PC210,FP106T,3XRZ2DCRHSYSGTZA0,2018,on_project,site_toowoomba,419000.0,,,BE Plant,10,BE Plant!10,1
+mch_csnb3atvsrp9tzv83,BE,org_be,EX-07,Excavator 20t,Komatsu,PC210,DM107V,CSNB3ATVSRP9TZV83,2018,available,site_brisbane_yard,443000.0,,,BE Plant,11,BE Plant!11,1
+mch_vjv7nsyv6uh5vs4ab,BE,org_be,EX-08,Excavator 20t,Komatsu,PC210,CP108T,VJV7NSYV6UH5VS4AB,2019,on_project,site_toowoomba,461000.0,,,BE Plant,12,BE Plant!12,1
+mch_2vxxzx00gzl4av7ad,BE,org_be,EX-09,Excavator 20t,Komatsu,PC210,AQ109W,2VXXZX00GZL4AV7AD,2014,on_project,site_brisbane_yard,322000.0,,,BE Plant,13,BE Plant!13,1
+mch_phya2f7974j2lm9rp,BE,org_be,GN-01,Generator,Cummins,C110,HK156S,PHYA2F7974J2LM9RP,2015,workshop,site_brisbane_yard,33500.0,,,BE Plant,67,BE Plant!67,1
+mch_4dsv1f53thmn1ncy8,BE,org_be,GN-02,Generator,Cummins,C110,HP157S,4DSV1F53THMN1NCY8,2018,available,site_brisbane_yard,46000.0,,,BE Plant,68,BE Plant!68,1
+mch_pwejcmb6j48juet25,BE,org_be,GN-03,Generator,Cummins,C110,EK158X,PWEJCMB6J48JUET25,2018,on_project,site_brisbane_yard,31000.0,,,BE Plant,69,BE Plant!69,1
+mch_9eyr5ab6f5xnmas8f,BE,org_be,LV-01,Light vehicle,Toyota,HiLux,EQ146U,9EYR5AB6F5XNMAS8F,2022,workshop,site_toowoomba,50500.0,,,BE Plant,56,BE Plant!56,1
+mch_k2hvnsv8jn73v9v6u,BE,org_be,LV-02,Light vehicle,Toyota,HiLux,HL147V,K2HVNSV8JN73V9V6U,2023,workshop,site_brisbane_yard,66000.0,,,BE Plant,57,BE Plant!57,1
+mch_4la3dme7kt0c3k12y,BE,org_be,LV-03,Light vehicle,Toyota,HiLux,CM148T,4LA3DME7KT0C3K12Y,2021,on_project,site_brisbane_yard,70500.0,,,BE Plant,58,BE Plant!58,1
+mch_xantkra7twf4rjf7d,BE,org_be,LV-04,Light vehicle,Toyota,HiLux,BM149V,XANTKRA7TWF4RJF7D,2016,on_project,site_brisbane_yard,66500.0,,,BE Plant,59,BE Plant!59,1
+mch_f0rfzxpkp4tcr92ee,BE,org_be,LV-05,Light vehicle,Toyota,HiLux,GP150S,F0RFZXPKP4TCR92EE,2018,on_project,site_toowoomba,58000.0,NH,Jul-26,BE Plant,60,BE Plant!60; NH Fleet!49,2
+mch_d27j80kr4p377b22d,BE,org_be,LV-06,Light vehicle,Toyota,HiLux,DM151X,D27J80KR4P377B22D,2023,disposed,site_toowoomba,59000.0,,,BE Plant,61,BE Plant!61,1
+mch_p83lajfrxusyd17g9,BE,org_be,LV-07,Light vehicle,Toyota,HiLux,CR152W,P83LAJFRXUSYD17G9,2019,on_project,site_toowoomba,62000.0,,,BE Plant,62,BE Plant!62,1
+mch_7amrt2tcn1lxa15a2,BE,org_be,LV-08,Light vehicle,Toyota,HiLux,HP153U,7AMRT2TCN1LXA15A2,2025,on_project,site_toowoomba,48000.0,,,BE Plant,63,BE Plant!63,1
+mch_grphurknu5vfu99hf,BE,org_be,LV-09,Light vehicle,Toyota,HiLux,HN154T,GRPHURKNU5VFU99HF,2020,available,site_toowoomba,51500.0,NH,Jul-26,BE Plant,64,BE Plant!64; NH Fleet!47,2
+mch_cwjxl90jmjl0fguan,BE,org_be,LV-10,Light vehicle,Toyota,HiLux,DP155S,CWJXL90JMJL0FGUAN,2024,available,site_toowoomba,62000.0,,,BE Plant,65,BE Plant!65,1
+mch_1dtpuzadvmd8yrjxh,BE,org_be,MX-01,Excavator 5t,Kubota,U55,CM110S,1DTPUZADVMD8YRJXH,2023,on_project,site_brisbane_yard,119500.0,,,BE Plant,15,BE Plant!15,1
+mch_t57f8avr2ru4zmzpl,BE,org_be,MX-02,Excavator 5t,Kubota,U55,BQ111X,T57F8AVR2RU4ZMZPL,2014,available,site_toowoomba,90500.0,,,BE Plant,16,BE Plant!16,1
+mch_dwye22tj1lh41ab8u,BE,org_be,MX-03,Excavator 5t,Kubota,U55,BM112X,DWYE22TJ1LH41AB8U,2024,available,site_toowoomba,99000.0,,,BE Plant,17,BE Plant!17,1
+mch_sbrabnmkj4gk57tdg,BE,org_be,MX-04,Excavator 5t,Kubota,U55,AP113T,SBRABNMKJ4GK57TDG,2014,available,site_brisbane_yard,118000.0,,,BE Plant,18,BE Plant!18,1
+mch_v30t53aepkpy6k98c,BE,org_be,MX-05,Excavator 5t,Kubota,U55,AM114T,V30T53AEPKPY6K98C,2014,available,site_brisbane_yard,121000.0,,,BE Plant,19,BE Plant!19,1
+mch_thjsgvjpd6a96pl0l,BE,org_be,MX-06,Excavator 5t,Kubota,U55,CR115S,THJSGVJPD6A96PL0L,2014,available,site_toowoomba,100000.0,,,BE Plant,20,BE Plant!20,1
+mch_5e81201u3g9ca5wt2,BE,org_be,MX-07,Excavator 5t,Kubota,U55,HR116V,5E81201U3G9CA5WT2,2018,on_project,site_brisbane_yard,133500.0,,,BE Plant,21,BE Plant!21,1
+mch_37sjtektu8jn25cwr,BE,org_be,RL-01,Roller,Bomag,BW213,HN141X,37SJTEKTU8JN25CWR,2021,available,site_brisbane_yard,,,,BE Plant,50,BE Plant!50,1
+mch_ymbevl8g29x2yjfec,BE,org_be,RL-02,Roller,Bomag,BW213,ER142T,YMBEVL8G29X2YJFEC,2026,available,site_brisbane_yard,187500.0,NH,Jul-26,BE Plant,51,BE Plant!51; NH Fleet!50,2
+mch_lsnbrj2y0t7fktse6,BE,org_be,RL-03,Roller,Bomag,BW213,AP143U,LSNBRJ2Y0T7FKTSE6,2018,available,site_brisbane_yard,148500.0,,,BE Plant,52,BE Plant!52,1
+mch_mhr5tzc3ylypasjf6,BE,org_be,RL-04,Roller,Bomag,BW213,DP144T,MHR5TZC3YLYPASJF6,2021,on_project,site_brisbane_yard,147500.0,,,BE Plant,53,BE Plant!53,1
+mch_l4k3tbk02g9wa6ct6,BE,org_be,RL-05,Roller,Bomag,BW213,EP145X,L4K3TBK02G9WA6CT6,2017,available,site_brisbane_yard,148500.0,,,BE Plant,54,BE Plant!54,1
+mch_uh1srupxhgh9cvhhj,BE,org_be,SK-01,Skid steer,Bobcat,S76,GN117V,UH1SRUPXHGH9CVHHJ,2020,on_project,site_toowoomba,,,,BE Plant,23,BE Plant!23,1
+mch_9a5dd7uuye7uv8pxr,BE,org_be,SK-02,Skid steer,Bobcat,S76,DL118X,9A5DD7UUYE7UV8PXR,2018,workshop,site_toowoomba,72500.0,,,BE Plant,24,BE Plant!24,1
+mch_xbj0b9n14euye07dt,BE,org_be,SK-03,Skid steer,Bobcat,S76,FN119U,XBJ0B9N14EUYE07DT,2026,disposed,site_toowoomba,102500.0,,,BE Plant,25,BE Plant!25,1
+mch_w4ysxn2w8nymturf6,BE,org_be,SK-04,Skid steer,Bobcat,S76,CP120U,W4YSXN2W8NYMTURF6,2014,on_project,site_brisbane_yard,91000.0,NH,Jul-26,BE Plant,26,BE Plant!26; NH Fleet!46,2
+mch_rpuh6pnv5uuefyy5l,BE,org_be,SK-05,Skid steer,Bobcat,S76,FR121U,RPUH6PNV5UUEFYY5L,2019,available,site_toowoomba,75000.0,,,BE Plant,27,BE Plant!27,1
+mch_g8x7y6pdhhfm3nh2z,BE,org_be,SK-06,Skid steer,Bobcat,S76,GP122U,G8X7Y6PDHHFM3NH2Z,2015,on_project,site_toowoomba,86500.0,,,BE Plant,28,BE Plant!28,1
+mch_cv7bjudx4fak3uhf9,BE,org_be,TP-01,Tipper,Hino,700,FP129U,CV7BJUDX4FAK3UHF9,2023,on_project,site_brisbane_yard,224000.0,,,BE Plant,37,BE Plant!37,1
+mch_80w1jj0w8wb9hek1z,BE,org_be,TP-02,Tipper,Hino,700,CN130T,80W1JJ0W8WB9HEK1Z,2020,disposed,site_brisbane_yard,300000.0,,,BE Plant,38,BE Plant!38,1
+mch_s6b2lecj9734xdghz,BE,org_be,TP-03,Tipper,Hino,700,EQ131X,S6B2LECJ9734XDGHZ,2021,available,site_toowoomba,249500.0,,,BE Plant,39,BE Plant!39,1
+mch_bm1srh9e8xa8tuzze,BE,org_be,TP-04,Tipper,Hino,700,CQ132U,BM1SRH9E8XA8TUZZE,2014,disposed,site_brisbane_yard,241500.0,,,BE Plant,40,BE Plant!40,1
+mch_v46d8ktcxhw3kj3t4,BE,org_be,TP-05,Tipper,Hino,700,HP133S,V46D8KTCXHW3KJ3T4,2019,on_project,site_brisbane_yard,246500.0,,,BE Plant,41,BE Plant!41,1
+mch_2psmtdlv25rraux5t,BE,org_be,TP-06,Tipper,Hino,700,GN134S,2PSMTDLV25RRAUX5T,2015,available,site_toowoomba,286500.0,,,BE Plant,42,BE Plant!42,1
+mch_1p6wangtjved6h01n,BE,org_be,TP-07,Tipper,Hino,700,EN135U,1P6WANGTJVED6H01N,2016,available,site_toowoomba,248000.0,,,BE Plant,43,BE Plant!43,1
+mch_37uw83n9rzvg6zs6j,BE,org_be,TP-08,Tipper,Hino,700,AK136X,37UW83N9RZVG6ZS6J,2017,workshop,site_toowoomba,279500.0,,,BE Plant,44,BE Plant!44,1
+mch_436az5fd1ghjrv6pn,BE,org_be,TP-09,Tipper,Hino,700,GN137T,436AZ5FD1GHJRV6PN,2018,disposed,site_toowoomba,228500.0,,,BE Plant,45,BE Plant!45,1
+mch_whlgxb0zdftg0m0z1,BE,org_be,TP-10,Tipper,Hino,700,GM138T,WHLGXB0ZDFTG0M0Z1,2015,on_project,site_toowoomba,239500.0,,,BE Plant,46,BE Plant!46,1
+mch_632xakbs66f5bnppm,BE,org_be,TP-11,Tipper,Hino,700,BM139T,632XAKBS66F5BNPPM,2017,available,site_brisbane_yard,197000.0,,,BE Plant,47,BE Plant!47,1
+mch_77088k03edp4hkdz8,BE,org_be,TP-12,Tipper,Hino,700,DQ140W,77088K03EDP4HKDZ8,2017,disposed,site_toowoomba,300500.0,,,BE Plant,48,BE Plant!48,1
+mch_48375v9bgspymx9p8,BE,org_be,WC-01,Water cart,Isuzu,FVZ,HP123X,48375V9BGSPYMX9P8,2022,workshop,site_toowoomba,188000.0,,,BE Plant,30,BE Plant!30,1
+mch_psnz3dvzpv0n5j3c9,BE,org_be,WC-02,Water cart,Isuzu,FVZ,AK124T,PSNZ3DVZPV0N5J3C9,2024,available,site_toowoomba,208500.0,NH,Jul-26,BE Plant,31,BE Plant!31; NH Fleet!48,2
+mch_553nw7azxxbrt72k0,BE,org_be,WC-03,Water cart,Isuzu,FVZ,HN125U,553NW7AZXXBRT72K0,2026,disposed,site_brisbane_yard,166000.0,,,BE Plant,32,BE Plant!32,1
+mch_5ul1798epb7u5t0k5,BE,org_be,WC-04,Water cart,Isuzu,FVZ,AQ126T,5UL1798EPB7U5T0K5,2022,on_project,site_brisbane_yard,199000.0,,,BE Plant,33,BE Plant!33,1
+mch_uj4xhxj355ut0vn5f,BE,org_be,WC-05,Water cart,Isuzu,FVZ,HP127X,UJ4XHXJ355UT0VN5F,2021,workshop,site_toowoomba,197500.0,,,BE Plant,34,BE Plant!34,1
+mch_aumxs0d4nnptzlgrh,BE,org_be,WC-06,Water cart,Isuzu,FVZ,BM128U,AUMXS0D4NNPTZLGRH,2017,on_project,site_brisbane_yard,212000.0,,,BE Plant,35,BE Plant!35,1
+mch_b0th8kpghk4bhnsfy,NH,org_nh,EX-01,Excavator 20t,,,AQ159T,B0TH8KPGHK4BHNSFY,2021,workshop,site_dubbo,407500.0,,,NH Fleet,39,NH Fleet!39,1
+mch_egv2lvp2nxkyn7y1g,NH,org_nh,EX-02,Excavator 20t,,,FR160V,EGV2LVP2NXKYN7Y1G,2025,available,site_newcastle,315000.0,,,NH Fleet,30,NH Fleet!30,1
+mch_hde9fvrxv2ksyap8c,NH,org_nh,EX-03,Excavator 20t,,,CQ161S,HDE9FVRXV2KSYAP8C,2020,available,site_dubbo,363500.0,,,NH Fleet,41,NH Fleet!41,1
+mch_pv5gggejepg8gjsut,NH,org_nh,EX-04,Excavator 20t,,,DP162U,PV5GGGEJEPG8GJSUT,2020,available,site_dubbo,346000.0,,,NH Fleet,23,NH Fleet!23,1
+mch_p4y2d08au04f207j3,NH,org_nh,EX-05,Excavator 20t,,,GR163T,P4Y2D08AU04F207J3,2023,on_project,site_newcastle,337500.0,,,NH Fleet,11,NH Fleet!11,1
+mch_rego_cl164x,NH,org_nh,EX-06,Excavator 20t,,,CL164X,,2021,on_project,site_newcastle,447000.0,,,NH Fleet,2,NH Fleet!2,1
+mch_1ksvx6accm95xwa5h,NH,org_nh,GN-01,Generator,,,BK198X,1KSVX6ACCM95XWA5H,2026,available,site_dubbo,35500.0,,,NH Fleet,35,NH Fleet!35,1
+mch_hnfu9ck4nz0jyut66,NH,org_nh,GN-02,Generator,,,CK199W,HNFU9CK4NZ0JYUT66,2021,on_project,site_newcastle,32500.0,,,NH Fleet,40,NH Fleet!40,1
+mch_v31yvx6fl9j1221hx,NH,org_nh,LV-01,Light vehicle,,,HK191W,V31YVX6FL9J1221HX,2018,on_project,site_dubbo,48500.0,,,NH Fleet,31,NH Fleet!31,1
+mch_7xb9335vsf0sgcymm,NH,org_nh,LV-02,Light vehicle,,,EM192S,7XB9335VSF0SGCYMM,2019,on_project,site_dubbo,48000.0,,,NH Fleet,15,NH Fleet!15,1
+mch_zz4kp8yktzf93y8j4,NH,org_nh,LV-03,Light vehicle,,,EN193W,ZZ4KP8YKTZF93Y8J4,2019,workshop,site_newcastle,46000.0,,,NH Fleet,43,NH Fleet!43,1
+mch_t8cfew1mmtfzg8hl4,NH,org_nh,LV-04,Light vehicle,,,EM194U,T8CFEW1MMTFZG8HL4,2017,available,site_newcastle,59000.0,,,NH Fleet,3,NH Fleet!3,1
+mch_ujyrwcmwz6ubk28zv,NH,org_nh,LV-05,Light vehicle,,,DM195X,UJYRWCMWZ6UBK28ZV,2017,available,site_newcastle,50000.0,,,NH Fleet,19,NH Fleet!19,1
+mch_5afjj9l7aaskk4p17,NH,org_nh,LV-06,Light vehicle,,,FK196S,5AFJJ9L7AASKK4P17,2016,on_project,site_dubbo,64500.0,,,NH Fleet,7,NH Fleet!7,1
+mch_rego_gl197t,NH,org_nh,LV-07,Light vehicle,,,GL197T,,2020,available,site_newcastle,61000.0,,,NH Fleet,14,NH Fleet!14,1
+mch_kgy7bcvawtje6na0c,NH,org_nh,MX-01,Excavator 5t,,,GL165X,KGY7BCVAWTJE6NA0C,2024,on_project,site_newcastle,105000.0,,,NH Fleet,24,NH Fleet!24,1
+mch_7l9bs20hdt9ddpwgl,NH,org_nh,MX-02,Excavator 5t,,,EQ166W,7L9BS20HDT9DDPWGL,2015,available,site_newcastle,117000.0,,,NH Fleet,44,NH Fleet!44,1
+mch_dhwa0wj66krhb7caa,NH,org_nh,MX-03,Excavator 5t,,,BN167U,DHWA0WJ66KRHB7CAA,2021,on_project,site_newcastle,89500.0,,,NH Fleet,12,NH Fleet!12,1
+mch_6h9azgpaw94jelb5a,NH,org_nh,MX-04,Excavator 5t,,,FK168U,6H9AZGPAW94JELB5A,2026,workshop,site_newcastle,89500.0,,,NH Fleet,29,NH Fleet!29,1
+mch_33ehfm24609v6u6t2,NH,org_nh,MX-05,Excavator 5t,,,BN169U,33EHFM24609V6U6T2,2019,on_project,site_newcastle,128000.0,,,NH Fleet,17,NH Fleet!17,1
+mch_6ch8daxhab22y54ku,NH,org_nh,RL-01,Roller,,,DL188U,6CH8DAXHAB22Y54KU,2021,on_project,site_dubbo,187500.0,,,NH Fleet,18,NH Fleet!18,1
+mch_7blc5xjnwf65t2dls,NH,org_nh,RL-02,Roller,,,GR189X,7BLC5XJNWF65T2DLS,2023,on_project,site_dubbo,173500.0,,,NH Fleet,6,NH Fleet!6,1
+mch_09fzbnx224y8g4vg6,NH,org_nh,RL-03,Roller,,,DN190X,09FZBNX224Y8G4VG6,2024,on_project,site_dubbo,191000.0,,,NH Fleet,9,NH Fleet!9,1
+mch_pd58bntlu25vwyykb,NH,org_nh,SK-01,Skid steer,,,GM170V,PD58BNTLU25VWYYKB,2020,available,site_dubbo,106000.0,,,NH Fleet,27,NH Fleet!27,1
+mch_wls0hwskk3g0ue017,NH,org_nh,SK-02,Skid steer,,,EQ171S,WLS0HWSKK3G0UE017,2014,available,site_dubbo,74500.0,,,NH Fleet,5,NH Fleet!5,1
+mch_rego_dm172t,NH,org_nh,SK-03,Skid steer,,,DM172T,,2020,workshop,site_dubbo,73500.0,,,NH Fleet,37,NH Fleet!37,1
+mch_xdtb30k6sf87nhwzr,NH,org_nh,SK-04,Skid steer,,,AP173V,XDTB30K6SF87NHWZR,2017,available,site_dubbo,78000.0,,,NH Fleet,36,NH Fleet!36,1
+mch_xzaelcyjj11t4ap0x,NH,org_nh,TP-01,Tipper,,,EP179S,XZAELCYJJ11T4AP0X,2020,on_project,site_newcastle,295500.0,,,NH Fleet,33,NH Fleet!33,1
+mch_ew5l36mfjd6e4wefs,NH,org_nh,TP-02,Tipper,,,AL180S,EW5L36MFJD6E4WEFS,2020,available,site_dubbo,262500.0,,,NH Fleet,22,NH Fleet!22,1
+mch_hxy8hbsbpbtdk16gz,NH,org_nh,TP-03,Tipper,,,AM181V,HXY8HBSBPBTDK16GZ,2022,on_project,site_newcastle,290000.0,,,NH Fleet,28,NH Fleet!28,1
+mch_cztt0p2pwcft0s84p,NH,org_nh,TP-04,Tipper,,,DR182W,CZTT0P2PWCFT0S84P,2019,available,site_newcastle,212000.0,,,NH Fleet,45,NH Fleet!45,1
+mch_rego_aq183s,NH,org_nh,TP-05,Tipper,,,AQ183S,,2020,available,site_dubbo,234500.0,,,NH Fleet,25,NH Fleet!25,1
+mch_bmu1dpd5t3zb8zff3,NH,org_nh,TP-06,Tipper,,,CK184T,BMU1DPD5T3ZB8ZFF3,2025,on_project,site_newcastle,300500.0,,,NH Fleet,34,NH Fleet!34,1
+mch_un809z456wru10w3v,NH,org_nh,TP-07,Tipper,,,CM185U,UN809Z456WRU10W3V,2020,on_project,site_newcastle,287000.0,,,NH Fleet,13,NH Fleet!13,1
+mch_kesygxln8rr8uya3p,NH,org_nh,TP-08,Tipper,,,DQ186U,KESYGXLN8RR8UYA3P,2019,disposed,site_dubbo,222000.0,,,NH Fleet,21,NH Fleet!21,1
+mch_bl7s6caxszr4afwdr,NH,org_nh,TP-09,Tipper,,,CR187W,BL7S6CAXSZR4AFWDR,2017,on_project,site_dubbo,227500.0,,,NH Fleet,38,NH Fleet!38,1
+mch_nvjjx0yp79ng6vzjf,NH,org_nh,WC-01,Water cart,,,EL174S,NVJJX0YP79NG6VZJF,2022,on_project,site_newcastle,195000.0,,,NH Fleet,8,NH Fleet!8,1
+mch_eslr3wxu1576jkez5,NH,org_nh,WC-02,Water cart,,,AM175V,ESLR3WXU1576JKEZ5,2023,on_project,site_newcastle,157000.0,,,NH Fleet,32,NH Fleet!32,1
+mch_ycd1bkn72saf2m26t,NH,org_nh,WC-03,Water cart,,,FQ176T,YCD1BKN72SAF2M26T,2015,available,site_newcastle,239000.0,,,NH Fleet,4,NH Fleet!4,1
+mch_lf8bah48z2x3sjzcr,NH,org_nh,WC-04,Water cart,,,GM177U,LF8BAH48Z2X3SJZCR,2023,on_project,site_dubbo,180000.0,,,NH Fleet,16,NH Fleet!16,1
+mch_2v002lc8p2vn5br7z,NH,org_nh,WC-05,Water cart,,,HM178W,2V002LC8P2VN5BR7Z,2021,on_project,site_newcastle,195000.0,,,NH Fleet,20,NH Fleet!20,1

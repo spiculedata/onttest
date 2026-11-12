@@ -1,0 +1,5 @@
+site_id,name,written_as,site_type,state,state_basis,used_by_business,register_line_count
+site_brisbane_yard,Brisbane Yard,Brisbane Yard,depot,QLD,MDM site reference (inferred from town name),BE,28
+site_dubbo,Dubbo,Dubbo,depot,NSW,MDM site reference (inferred from town name),NH,19
+site_newcastle,Newcastle,Newcastle,depot,NSW,MDM site reference (inferred from town name),NH,27
+site_toowoomba,Toowoomba,Toowoomba,depot,QLD,MDM site reference (inferred from town name),BE,30

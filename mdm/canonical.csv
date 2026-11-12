@@ -1,0 +1,31 @@
+domain,canonical,code,description
+category,Excavator 20t,EX,Tracked excavator around 20 tonnes
+category,Excavator 5t,MX,Mini excavator around 5 tonnes
+category,Skid steer,SK,Skid steer loader
+category,Water cart,WC,Water cart / water truck for dust suppression and compaction
+category,Tipper,TP,Tipper truck including truck-and-dog combinations
+category,Roller,RL,Smooth drum roller
+category,Light vehicle,LV,Ute or light 4x4
+category,Generator,GN,Portable generator set
+status,available,,In the yard and free to go out
+status,on_project,,Working on a project
+status,workshop,,Being repaired or serviced
+status,disposed,,Sold or disposed of
+status,transferred,,Moved to the other business; the receiving sheet holds the current line
+supplier,Southgate Plant Hire,,External hire supplier
+supplier,Murrawa Equipment,,External hire supplier
+supplier,Hirewell Pty Ltd,,External hire supplier
+supplier,Tidal Earthmoving Pty Ltd,,External hire supplier
+site,Toowoomba,QLD,BE depot
+site,Brisbane Yard,QLD,BE depot
+site,Newcastle,NSW,NH depot
+site,Dubbo,NSW,NH depot
+rate_basis,day,1,Per working day
+rate_basis,wk,5,Per week (5 working days per READ ME)
+rate_basis,mth,22,Per month (22 working days per READ ME)
+gst,inc,,Rate includes 10% GST
+gst,ex,,Rate excludes GST
+business,BE,,Brackenfield Earthworks
+business,NH,,Norland Haulage
+unit,h,1,Engine hours
+unit,s,0.000277777778,Engine seconds (divide by 3600)

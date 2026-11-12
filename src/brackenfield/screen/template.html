@@ -1,0 +1,592 @@
+<!doctype html>
+<html lang="en-AU">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Which hires could I end right now?</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Source+Sans+3:wght@400;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: a plant-yard worksheet. Answer sentence on top, five tally tiles, then the swap
+   list as the working surface; evidence and proposals open in a side panel beside it. */
+:root {
+  --ground: #eef1ed;
+  --panel: #ffffff;
+  --ink: #17201b;
+  --muted: #56645b;
+  --line: #d3dad4;
+  --accent: #a35f00;
+  --accent-soft: #f6e8d2;
+  --ok: #24724a;
+  --ok-soft: #dcefe3;
+  --unconf: #7d5200;
+  --unconf-soft: #fbf1dc;
+  --bad: #a83a2c;
+  --bad-soft: #f7e1dd;
+  --hatch: rgba(125, 82, 0, 0.13);
+  --shadow: 0 1px 2px rgba(23, 32, 27, 0.06), 0 6px 24px rgba(23, 32, 27, 0.08);
+  --font-display: "Barlow Condensed", "Arial Narrow", "Roboto Condensed", sans-serif;
+  --font-body: "Source Sans 3", "Segoe UI", system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --ground: #111613; --panel: #19201c; --ink: #e4ebe6; --muted: #9aa8a0; --line: #2c3731;
+    --accent: #e6a447; --accent-soft: #3a2b14; --ok: #74c597; --ok-soft: #173325;
+    --unconf: #e9bd63; --unconf-soft: #33280f; --bad: #ee8576; --bad-soft: #3a1e1a;
+    --hatch: rgba(233, 189, 99, 0.12); --shadow: 0 1px 2px rgba(0,0,0,.3), 0 6px 24px rgba(0,0,0,.35);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --ground: #111613; --panel: #19201c; --ink: #e4ebe6; --muted: #9aa8a0; --line: #2c3731;
+  --accent: #e6a447; --accent-soft: #3a2b14; --ok: #74c597; --ok-soft: #173325;
+  --unconf: #e9bd63; --unconf-soft: #33280f; --bad: #ee8576; --bad-soft: #3a1e1a;
+  --hatch: rgba(233, 189, 99, 0.12); --shadow: 0 1px 2px rgba(0,0,0,.3), 0 6px 24px rgba(0,0,0,.35);
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html, body { margin: 0; }
+body {
+  background: var(--ground); color: var(--ink); font: 400 15px/1.5 var(--font-body);
+  padding-inline: 16px; padding-block: max(20px, env(safe-area-inset-top, 0px)) 120px;
+}
+.wrap { max-width: 1240px; margin-inline: auto; display: grid; gap: 22px; }
+h1, h2, h3 { font-family: var(--font-display); font-weight: 600; letter-spacing: .01em; text-wrap: balance; margin: 0; }
+h1 { font-size: clamp(30px, 4.4vw, 46px); line-height: 1.02; }
+h2 { font-size: 24px; }
+h3 { font-size: 19px; }
+.eyebrow { font: 600 12px/1.2 var(--font-body); text-transform: uppercase; letter-spacing: .09em; color: var(--muted); }
+.mono { font-family: var(--font-mono); font-size: .86em; }
+.num { font-variant-numeric: tabular-nums; }
+.muted { color: var(--muted); }
+button { font: inherit; color: inherit; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+header.top { display: grid; gap: 10px; }
+.asof { display: flex; flex-wrap: wrap; gap: 8px 18px; color: var(--muted); font-size: 14px; }
+.asof b { color: var(--ink); font-weight: 600; }
+.worldswitch { display: inline-flex; border: 1px solid var(--line); border-radius: 999px; overflow: hidden; background: var(--panel); }
+.seg { border: 0; background: transparent; padding: 2px 12px; cursor: pointer; color: var(--muted); }
+.seg.on { background: var(--ink); color: var(--panel); }
+.seg:disabled { cursor: default; opacity: .5; }
+.readonly { display: inline-flex; gap: 6px; align-items: center; padding: 2px 10px; border: 1px solid var(--line); border-radius: 999px; background: var(--panel); }
+
+.answer { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 18px 20px; box-shadow: var(--shadow); display: grid; gap: 10px; }
+.answer p { margin: 0; font-size: clamp(18px, 2.1vw, 22px); line-height: 1.45; max-width: 68ch; }
+.figure { all: unset; cursor: pointer; font-weight: 700; font-variant-numeric: tabular-nums; border-bottom: 2px solid var(--accent); padding-inline: 1px; }
+.figure:hover { background: var(--accent-soft); }
+.figure:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.figure.unconfirmed { border-bottom: 2px dashed var(--unconf); color: var(--unconf); }
+.legend { display: flex; flex-wrap: wrap; gap: 8px 16px; font-size: 13px; color: var(--muted); }
+
+.tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 12px; }
+.tile { all: unset; cursor: pointer; display: grid; gap: 4px; align-content: start; background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; }
+.tile:hover { border-color: var(--accent); }
+.tile:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.tile .big { font: 700 34px/1 var(--font-display); font-variant-numeric: tabular-nums; }
+.tile .sub { font-size: 13px; color: var(--muted); }
+.tile.unconfirmed { background-image: repeating-linear-gradient(135deg, var(--hatch) 0 6px, transparent 6px 12px); border-style: dashed; border-color: var(--unconf); }
+.tile.unconfirmed .big { color: var(--unconf); }
+.tile.warn .big { color: var(--bad); }
+
+.chip { display: inline-flex; align-items: center; gap: 5px; padding: 1px 9px; border-radius: 999px; font: 600 12px/1.6 var(--font-body); white-space: nowrap; }
+.chip.ok { background: var(--ok-soft); color: var(--ok); }
+.chip.unc { background: var(--unconf-soft); color: var(--unconf); border: 1px dashed var(--unconf); }
+.chip.bad { background: var(--bad-soft); color: var(--bad); }
+.chip.plain { background: var(--ground); color: var(--muted); border: 1px solid var(--line); }
+
+section.card { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 16px 0 6px; display: grid; gap: 10px; min-width: 0; }
+section.card > .head { padding-inline: 18px; display: grid; gap: 4px; }
+section.card > .head p { margin: 0; color: var(--muted); max-width: 80ch; }
+.tablewrap { overflow-x: auto; }
+table { border-collapse: collapse; width: 100%; font-size: 14px; }
+th { text-align: left; font: 600 12px/1.3 var(--font-body); text-transform: uppercase; letter-spacing: .06em; color: var(--muted); padding: 8px 10px; border-bottom: 1px solid var(--line); white-space: nowrap; }
+td { padding: 10px; border-bottom: 1px solid var(--line); vertical-align: top; }
+th:first-child, td:first-child { padding-left: 18px; }
+th:last-child, td:last-child { padding-right: 18px; }
+tr:last-child td { border-bottom: 0; }
+tr.unc td { background-image: repeating-linear-gradient(135deg, var(--hatch) 0 6px, transparent 6px 12px); }
+td.money { text-align: right; font-variant-numeric: tabular-nums; font-weight: 600; white-space: nowrap; }
+th.money { text-align: right; }
+.reasons { margin: 6px 0 0; padding-left: 18px; color: var(--unconf); font-size: 13px; max-width: 60ch; }
+.linkish { all: unset; cursor: pointer; color: var(--accent); font-weight: 600; border-bottom: 1px solid currentColor; }
+.linkish:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.btn { cursor: pointer; border: 1px solid var(--accent); background: var(--accent); color: var(--panel); border-radius: 8px; padding: 6px 12px; font-weight: 600; white-space: nowrap; }
+.btn.secondary { background: transparent; color: var(--accent); }
+.btn:disabled { opacity: .55; cursor: default; }
+.spark { display: block; }
+.spark-wrap { display: grid; gap: 2px; font-size: 12px; color: var(--muted); }
+.ref { font-family: var(--font-mono); font-size: 12px; color: var(--muted); white-space: nowrap; }
+details.more { padding-inline: 18px; padding-bottom: 10px; }
+details.more summary { cursor: pointer; font-weight: 600; color: var(--accent); }
+
+aside.panel { position: fixed; inset: 0 0 0 auto; width: min(560px, 100%); background: var(--panel); border-left: 1px solid var(--line); box-shadow: var(--shadow); overflow-y: auto; z-index: 20; padding: max(18px, env(safe-area-inset-top, 0px)) 20px 40px; display: grid; gap: 14px; align-content: start; }
+aside.panel .close { justify-self: end; }
+.scrim { position: fixed; inset: 0; background: rgba(0,0,0,.28); z-index: 10; }
+.steps { margin: 0; padding-left: 20px; display: grid; gap: 8px; }
+.kv { display: grid; grid-template-columns: max-content 1fr; gap: 4px 14px; font-size: 14px; margin: 0; }
+.kv dt { color: var(--muted); }
+.kv dd { margin: 0; min-width: 0; overflow-wrap: anywhere; }
+.box { border: 1px solid var(--line); border-radius: 8px; padding: 12px 14px; display: grid; gap: 8px; }
+.box.unc { border-style: dashed; border-color: var(--unconf); background-image: repeating-linear-gradient(135deg, var(--hatch) 0 6px, transparent 6px 12px); }
+.record { border-bottom: 1px solid var(--line); padding-block: 10px; display: grid; gap: 4px; }
+.record:last-child { border-bottom: 0; }
+
+.questions { padding-inline: 18px; padding-bottom: 14px; display: grid; gap: 18px; }
+.qgroup { display: grid; gap: 10px; }
+.qlist { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; counter-reset: q var(--start, 0); }
+.q { counter-increment: q; border: 1px solid var(--line); border-radius: 8px; padding: 12px 14px 12px 50px; position: relative; display: grid; gap: 6px; }
+.q::before { content: counter(q); position: absolute; left: 14px; top: 11px; font: 700 22px/1 var(--font-display); color: var(--accent); }
+.q.other::before { color: var(--muted); }
+.q h3 { font-size: 19px; }
+.q p { margin: 0; max-width: 78ch; }
+.q .effect { font-weight: 600; }
+.q .effect.money { color: var(--accent); }
+.q .ask { color: var(--muted); }
+.q .recs { font-size: 13px; line-height: 1.7; }
+.q .rec { white-space: nowrap; }
+.q .recs .ref { font-size: 12px; }
+.tray { position: fixed; left: 0; right: 0; bottom: 0; z-index: 5; background: var(--panel); border-top: 1px solid var(--line); box-shadow: var(--shadow); padding: 10px 16px calc(10px + env(safe-area-inset-bottom, 0px)); }
+.tray .in { max-width: 1240px; margin-inline: auto; display: flex; flex-wrap: wrap; gap: 10px 16px; align-items: center; justify-content: space-between; }
+textarea { width: 100%; min-height: 160px; font: 13px/1.45 var(--font-mono); background: var(--ground); color: var(--ink); border: 1px solid var(--line); border-radius: 8px; padding: 10px; }
+
+@media (max-width: 720px) {
+  .hide-sm { display: none; }
+  td, th { padding: 8px; }
+}
+@media (prefers-reduced-motion: no-preference) {
+  aside.panel { animation: slide .18s ease-out; }
+  @keyframes slide { from { transform: translateX(24px); opacity: .6; } to { transform: none; opacity: 1; } }
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <span class="eyebrow">Brackenfield group plant · for Priya N.</span>
+    <h1>Which hires could I end right now because we own something idle that would do the job?</h1>
+    <div class="asof" id="asof"></div>
+  </header>
+
+  <div class="answer" id="answer"></div>
+  <div class="tiles" id="tiles"></div>
+
+  <section class="card" aria-labelledby="q-h">
+    <div class="head">
+      <h2 id="q-h">Open questions for you</h2>
+      <p>In order: the first group could change today's answer, the second is worth knowing but doesn't.</p>
+    </div>
+    <div id="questions" class="questions"></div>
+  </section>
+
+  <section class="card" aria-labelledby="swaps-h">
+    <div class="head">
+      <h2 id="swaps-h">Hires you could end, with the owned machine that would replace each one</h2>
+      <p>Dearest hire first. Each owned machine is used once. Hatched rows rely on something I could not confirm; the reasons are listed under the hire.</p>
+    </div>
+    <div class="tablewrap"><table id="swaps"></table></div>
+  </section>
+
+  <section class="card" aria-labelledby="working-h">
+    <div class="head">
+      <h2 id="working-h">The register says these are available; their trackers say they are working</h2>
+      <p>Not offered as replacements: FieldTrax shows 1.0 engine hour or more between 18 and 31 Oct. Nine of them had a meter reset on 23 Oct and have run about 30 hours a week since. The register may be out of date.</p>
+    </div>
+    <div class="tablewrap"><table id="working"></table></div>
+  </section>
+
+  <section class="card" aria-labelledby="nomatch-h">
+    <div class="head">
+      <h2 id="nomatch-h">Hires with nothing idle to replace them</h2>
+      <p>No idle owned machine of the same type in the same state. Where an idle machine exists interstate, it is named, but not counted.</p>
+    </div>
+    <div class="tablewrap"><table id="nomatch"></table></div>
+  </section>
+
+  <section class="card" aria-labelledby="rules-h">
+    <div class="head">
+      <h2 id="rules-h">How this was worked out</h2>
+    </div>
+    <div style="padding-inline:18px" id="rules"></div>
+  </section>
+</div>
+
+<div class="tray" id="tray" hidden>
+  <div class="in">
+    <div><b id="tray-count">0</b> proposals drafted · <span id="tray-total" class="num"></span> a day ex GST · nothing has been sent or changed</div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <button class="btn secondary" id="tray-view" type="button">Review proposals</button>
+      <button class="btn secondary" id="tray-clear" type="button">Clear</button>
+    </div>
+  </div>
+</div>
+
+<div class="scrim" id="scrim" hidden></div>
+<aside class="panel" id="panel" hidden aria-modal="true" role="dialog" aria-labelledby="panel-title">
+  <button class="btn secondary close" id="panel-close" type="button">Close</button>
+  <div id="panel-body"></div>
+</aside>
+
+<script>
+const DATA = /*__DATA__*/null;
+
+const $ = (sel) => document.querySelector(sel);
+const esc = (v) => String(v ?? "").replace(/[&<>"']/g, (c) => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const aud = (n) => n == null ? "?" : n.toLocaleString("en-AU", { style: "currency", currency: "AUD", minimumFractionDigits: 2 });
+const audWhole = (n) => n == null ? "?" : n.toLocaleString("en-AU", { style: "currency", currency: "AUD", maximumFractionDigits: 0 });
+const fmtDate = (iso) => iso ? new Date(iso + (iso.length === 10 ? "T00:00:00" : "")).toLocaleDateString("en-AU", { day: "numeric", month: "short", year: "numeric" }) : "—";
+const fmtTime = (iso) => iso ? new Date(iso).toLocaleString("en-AU", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit", timeZone: "UTC" }) + " UTC" : "—";
+const ref = (tab, row) => `${tab}!${row}`;
+const sum = (xs, f) => xs.reduce((a, x) => a + (f(x) || 0), 0);
+
+const signOff = DATA.sign_off;
+let worldKey = "before", W, machines, hires, live, endConfirmed, endUnconfirmed, swaps, noMatch, dupLines, avail, idleConfirmed, idleUnconfirmed, working;
+function setWorld(key) {
+  worldKey = key; W = DATA.worlds[key];
+  machines = new Map(W.machines.map((m) => [m.machine_id, m]));
+  hires = W.hires;
+  live = hires.filter((h) => h.outcome !== "duplicate");
+  endConfirmed = hires.filter((h) => h.outcome === "end_confirmed");
+  endUnconfirmed = hires.filter((h) => h.outcome === "end_unconfirmed");
+  swaps = [...endConfirmed, ...endUnconfirmed].sort((a, b) => b.day_ex - a.day_ex);
+  noMatch = hires.filter((h) => h.outcome === "no_match");
+  dupLines = hires.filter((h) => h.outcome === "duplicate");
+  avail = W.machines;
+  idleConfirmed = avail.filter((m) => m.idle_status === "confirmed");
+  idleUnconfirmed = avail.filter((m) => m.idle_status === "unconfirmed");
+  working = avail.filter((m) => m.idle_status === "working");
+}
+setWorld("before");
+
+let proposals = [];
+try { proposals = JSON.parse(localStorage.getItem("priya-proposals") || "[]").filter((r) => DATA.worlds.before.hires.some((h) => h.row === r && h.machine_id)); } catch { proposals = []; }
+const saveProposals = () => { try { localStorage.setItem("priya-proposals", JSON.stringify(proposals)); } catch { /* storage unavailable: proposals last for this visit */ } };
+
+function machineLabel(m) { return `${m.business_code} ${m.fleet_no}`; }
+
+function spark(machineId, w = 132, h = 30) {
+  const pts = W.series[machineId];
+  if (!pts || pts.length < 2) return `<span class="muted">no readings 18–31 Oct</span>`;
+  const t0 = Date.parse(DATA.meta.window_start), t1 = Date.parse(DATA.meta.window_end);
+  // Cumulative hours run across the window: each point adds its positive increase (resets add nothing).
+  let acc = 0; const ys = pts.map((p) => (acc += p[1]));
+  const top = Math.max(10, acc);
+  const x = (t) => 2 + ((t - t0) / Math.max(1, t1 - t0)) * (w - 4);
+  const y = (v) => h - 3 - (v / top) * (h - 6);
+  const line = pts.map((p, i) => `${x(Date.parse(p[0])).toFixed(1)},${y(ys[i]).toFixed(1)}`).join(" ");
+  const area = `2,${h - 3} ${line} ${(w - 2).toFixed(1)},${h - 3}`;
+  const color = acc >= DATA.meta.idle_max_hours ? "var(--bad)" : "var(--ok)";
+  return `<svg class="spark" width="${w}" height="${h}" viewBox="0 0 ${w} ${h}" role="img" aria-label="${acc.toFixed(1)} engine hours over ${pts.length} readings">
+    <line x1="2" x2="${w - 2}" y1="${h - 3}" y2="${h - 3}" stroke="var(--line)" stroke-width="1"/>
+    <polygon points="${area}" fill="${color}" fill-opacity=".12"/>
+    <polyline points="${line}" fill="none" stroke="${color}" stroke-width="1.6"/>
+    <circle cx="${x(Date.parse(pts[pts.length - 1][0])).toFixed(1)}" cy="${y(acc).toFixed(1)}" r="2.4" fill="${color}"/></svg>`;
+}
+
+function evidence(m) {
+  if (m.hours_run == null) return `<span class="muted">${m.device_ids ? "no readings in the window" : "no FieldTrax device"}</span>`;
+  return `<div class="spark-wrap">${spark(m.machine_id)}<span>${m.hours_run} h run</span></div>`;
+}
+
+function statusChip(h) {
+  return h.outcome === "end_confirmed" ? `<span class="chip ok">Confirmed</span>` : `<span class="chip unc">Unconfirmed</span>`;
+}
+
+function renderHeader() {
+  const adv = DATA.meta.advance_seen;
+  $("#asof").innerHTML = `
+    <span>As of <b>${esc(DATA.meta.as_of_label)}</b></span>
+    <span>Idle window <b>18 Oct 00:00 – 31 Oct 23:59 AEST</b></span>
+    <span class="worldswitch" role="group" aria-label="FieldTrax data">
+      <button type="button" class="seg ${worldKey === "before" ? "on" : ""}" data-world="before" aria-pressed="${worldKey === "before"}">FieldTrax before /__advance</button>
+      <button type="button" class="seg ${worldKey === "after_advance" ? "on" : ""}" data-world="after_advance" aria-pressed="${worldKey === "after_advance"}" ${adv ? "" : "disabled"}>After /__advance</button>
+    </span>
+    <span class="readonly">Read-only · ending a hire here is a proposal, nothing is sent</span>
+    ${worldKey === "after_advance" ? `<div class="box" style="flex-basis:100%"><b>After /__advance.</b> ${afterSummary()}</div>` : ""}`;
+}
+
+function afterSummary() {
+  const b = DATA.worlds.before, a = DATA.worlds.after_advance;
+  const key = (w) => w.hires.filter((h) => h.machine_id).map((h) => `${h.row}:${h.machine_id}:${h.outcome}`).sort().join("|");
+  const same = key(b) === key(a);
+  const devs = DATA.advance_device_changes.map((d) => `${esc(d.device_id)}: ${esc(d.detail)}`).join("; ");
+  return `${same ? "The answer does not change: every pair and its status is the same." : "The answer changes; compare the lists."} Device changes: ${devs || "none"}.`;
+}
+
+function renderAnswer() {
+  const c = sum(endConfirmed, (h) => h.day_ex), u = sum(endUnconfirmed, (h) => h.day_ex);
+  $("#answer").innerHTML = `
+    <p>As of 31 October, you could end <button class="figure" data-show="confirmed">${endConfirmed.length} hires</button> now and save
+    <button class="figure" data-show="confirmed">${aud(c)} a day</button> ex GST. Each is replaced by an owned machine that is Available and ran under ${DATA.meta.idle_max_hours} engine hour from 18 to 31 Oct.</p>
+    <p>Another <button class="figure unconfirmed" data-show="unconfirmed">${endUnconfirmed.length} hires</button>
+    (<button class="figure unconfirmed" data-show="unconfirmed">${aud(u)} a day</button>) could go too, but the machine that would replace each one has no FieldTrax data to confirm it is idle.</p>
+    <div class="legend"><span><span class="chip ok">Confirmed</span> register and tracker agree</span>
+    <span><span class="chip unc">Unconfirmed</span> no FieldTrax confirmation, or a detail I could not confirm</span>
+    <span>Every underlined number opens the records behind it.</span></div>`;
+}
+
+function renderTiles() {
+  const tiles = [
+    { key: "onhire", big: live.length, label: "Hires on hire now", sub: `${hires.length} lines on Hires 25-26 · ${dupLines.length} line repeats another`, cls: "" },
+    { key: "confirmed", big: endConfirmed.length, label: "Could end, confirmed", sub: `${aud(sum(endConfirmed, (h) => h.day_ex))} a day ex GST`, cls: "" },
+    { key: "unconfirmed", big: endUnconfirmed.length, label: "Could end, unconfirmed", sub: `${aud(sum(endUnconfirmed, (h) => h.day_ex))} a day ex GST`, cls: "unconfirmed" },
+    { key: "nomatch", big: noMatch.length, label: "Nothing idle to swap in", sub: "same type, same state", cls: "" },
+    { key: "available", big: avail.length, label: "Owned and Available", sub: `${idleConfirmed.length} idle per FieldTrax · ${idleUnconfirmed.length} unconfirmed · ${working.length} ran ≥ ${DATA.meta.idle_max_hours} h`, cls: "" },
+    { key: "working", big: working.length, label: "Available, but working", sub: "not offered as replacements", cls: "warn" },
+  ];
+  $("#tiles").innerHTML = tiles.map((t) => `<button class="tile ${t.cls}" data-show="${t.key}">
+    <span class="eyebrow">${esc(t.label)}</span><span class="big">${t.big}</span><span class="sub">${esc(t.sub)}</span></button>`).join("");
+}
+
+function renderSwaps() {
+  const head = `<thead><tr><th>Hire</th><th class="hide-sm">Supplier</th><th>Type · project</th><th class="money">Saves a day<br>ex GST</th><th>Owned machine to use</th><th class="hide-sm">FieldTrax, 18–31 Oct AEST</th><th>Status</th><th></th></tr></thead>`;
+  const rows = swaps.map((h) => {
+    const m = machines.get(h.machine_id);
+    const drafted = proposals.includes(h.row);
+    const reasons = reasonList(h);
+    return `<tr class="${h.outcome === "end_unconfirmed" ? "unc" : ""}">
+      <td><button class="linkish" data-hire="${h.row}">${esc(h.hire_no)}</button><div class="ref">${ref(h.tab, h.row)}</div></td>
+      <td class="hide-sm">${esc(h.supplier)}</td>
+      <td>${esc(h.category)}<div class="muted">${esc(h.project_code)} ${esc(h.project_name)} · ${esc(h.state)}</div>${reasons}</td>
+      <td class="money"><button class="linkish" data-hire="${h.row}">${aud(h.day_ex)}</button></td>
+      <td><button class="linkish" data-machine="${esc(m.machine_id)}">${esc(machineLabel(m))}</button><div class="muted">${esc(m.depot)}</div><div class="ref">${ref(m.source_tab, m.source_row)}</div></td>
+      <td class="hide-sm">${evidence(m)}</td>
+      <td>${statusChip(h)}</td>
+      <td><button class="btn${drafted ? " secondary" : ""}" data-propose="${h.row}" type="button">${drafted ? "Drafted" : "Propose ending"}</button></td></tr>`;
+  }).join("");
+  $("#swaps").innerHTML = head + `<tbody>${rows}</tbody>`;
+}
+
+function renderWorking() {
+  const head = `<thead><tr><th>Machine</th><th>Type</th><th class="hide-sm">Depot</th><th>Register says</th><th>FieldTrax, 18–31 Oct AEST</th><th class="hide-sm">Tracker</th></tr></thead>`;
+  const rows = working.map((m) => `<tr>
+    <td><button class="linkish" data-machine="${esc(m.machine_id)}">${esc(machineLabel(m))}</button><div class="ref">${ref(m.source_tab, m.source_row)}</div></td>
+    <td>${esc(m.category)}</td><td class="hide-sm">${esc(m.depot)}, ${esc(m.state)}</td>
+    <td>${esc(m.status_label)}</td><td>${evidence(m)}</td><td class="hide-sm mono">${esc(m.device_ids)}</td></tr>`).join("");
+  $("#working").innerHTML = head + `<tbody>${rows}</tbody>`;
+}
+
+function reasonList(h) {
+  const items = [...h.unconfirmed.map((r) => `<li>${esc(r)}</li>`),
+    ...h.open_questions.map((r) => `<li><span class="chip unc">Unconfirmed detail</span> ${esc(r)}</li>`)];
+  return items.length ? `<ul class="reasons">${items.join("")}</ul>` : "";
+}
+
+function questionCard(q, cls) {
+  const hireRefs = q.hire_rows.map((r) => { const h = hires.find((x) => x.row === r); return `${h ? esc(h.hire_no) + " " : ""}<span class="ref">Hires 25-26!${r}</span>`; });
+  const machRefs = q.machine_ids.map((id) => { const m = machines.get(id); return m ? `${esc(machineLabel(m))} <span class="ref">${esc(m.source_tab)}!${m.source_row}</span>` : ""; }).filter(Boolean);
+  const refs = q.refs.map((r) => `<span class="ref">${esc(r)}</span>`);
+  const all = [...hireRefs, ...machRefs, ...refs];
+  return `<li class="q ${cls}">
+    <h3>${esc(q.title)}</h3>
+    <p>${esc(q.finding)}</p>
+    <p class="effect ${q.effect_per_day ? "money" : ""}">${esc(q.effect)}</p>
+    ${all.length ? `<p class="recs"><span class="muted">Records:</span> ${all.map((r) => `<span class="rec">${r}</span>`).join(" · ")}</p>` : ""}
+    <p class="ask">We need: ${esc(q.ask)}</p></li>`;
+}
+
+function renderQuestions() {
+  const qs = W.open_questions || [];
+  const a = qs.filter((q) => q.group === "answer"), o = qs.filter((q) => q.group === "other");
+  $("#questions").innerHTML = `
+    <div class="qgroup"><h3>Could change today's answer</h3><ol class="qlist">${a.map((q) => questionCard(q, "")).join("")}</ol></div>
+    <div class="qgroup"><h3>Worth knowing; doesn't change today's answer</h3><ol class="qlist" style="--start:${a.length}">${o.map((q) => questionCard(q, "other")).join("")}</ol></div>`;
+}
+
+function interstateIdle(h) {
+  const used = new Set(swaps.map((s) => s.machine_id));
+  return avail.filter((m) => m.idle_status !== "working" && !used.has(m.machine_id) && m.category === h.category && m.state !== h.state);
+}
+
+function renderNoMatch() {
+  const head = `<thead><tr><th>Hire</th><th>Type · project</th><th class="money">Costs a day<br>ex GST</th><th>Why there is no swap</th></tr></thead>`;
+  const rows = noMatch.map((h) => {
+    const elsewhere = interstateIdle(h);
+    const why = elsewhere.length
+      ? `Nothing idle in ${esc(h.state)}. Idle interstate: ${elsewhere.map((m) => `${esc(machineLabel(m))} (${esc(m.depot)})`).join(", ")}.`
+      : `No idle owned ${esc(h.category.toLowerCase())} left in ${esc(h.state)}.`;
+    return `<tr><td><button class="linkish" data-hire="${h.row}">${esc(h.hire_no)}</button><div class="ref">${ref(h.tab, h.row)}</div></td>
+      <td>${esc(h.category)}<div class="muted">${esc(h.project_code)} ${esc(h.project_name)} · ${esc(h.state)}</div></td>
+      <td class="money">${aud(h.day_ex)}</td><td>${why}</td></tr>`;
+  }).join("");
+  const dups = dupLines.map((h) => `<tr class="unc"><td><button class="linkish" data-hire="${h.row}">${esc(h.hire_no)}</button><div class="ref">${ref(h.tab, h.row)}</div></td>
+    <td>${esc(h.category)}<div class="muted">${esc(h.project_code)} · ${esc(h.state)}</div></td><td class="money">${aud(h.day_ex)}</td>
+    <td>Same as row ${h.duplicate_of_row} in every cell. Counted once above; if it is really a second machine, it is a second hire to look at.</td></tr>`).join("");
+  $("#nomatch").innerHTML = head + `<tbody>${rows}${dups}</tbody>`;
+}
+
+function dstText() {
+  const d = DATA.dst_check[worldKey];
+  const base = "AEST is UTC+10 all year. NSW was on daylight time (AEDT, UTC+11) in late October, so for NH the window could be read as starting and ending an hour earlier.";
+  const when = `FieldTrax readings in this view are at ${d.times_utc.join(", ")} UTC.`;
+  return d.edge_readings === 0
+    ? `${base} ${when} None falls in either of those hours, so the answer is the same either way.`
+    : `${base} ${when} ${d.edge_readings} reading(s) fall in those hours, so the AEDT reading could change an NH machine's hours.`;
+}
+
+function renderRules() {
+  const m = DATA.meta;
+  $("#rules").innerHTML = `<ul class="steps" style="padding-bottom:12px">
+    <li><b>As of</b> ${esc(m.as_of_label)}. The answer uses FieldTrax as stored by sync <span class="mono">${esc(m.before_run)}</span> (${esc(m.before_basis)}), before <span class="mono">/__advance</span>. Every sync's data is kept as received, so this view is rebuilt from exactly what that sync held. The switch at the top shows sync <span class="mono">${esc(m.after_run)}</span>, after it.</li>
+    <li><b>Time zone</b>: ${dstText()}</li>
+    <li><b>Open hire</b>: per the READ ME (struck through = cancelled; Start TBA = not started; Off-hire blank, "ongoing" or "TBA" = still on hire), with a start on or before 31 Oct and an off-hire after it, or none. Rates are converted to dollars a day ex GST: week ÷ ${m.week_days}, month ÷ ${m.month_days}, inc-GST ÷ 1.1, blank GST = BE inc / NH ex.</li>
+    <li><b>Idle</b>: the machine is Available on the register (the register writes Available or Yard; the READ ME says they mean the same), and FieldTrax shows under ${m.idle_max_hours} engine hour between 18 Oct 00:00 and 31 Oct 23:59 AEST. Hours run = the sum of positive increases between consecutive readings, across all of the machine's devices. No device, or no readings in the window = unconfirmed, never idle.</li>
+    <li><b>Replaceable</b>: an idle machine replaces one open hire of the same category on a project in the same state as its depot. Within a category and state any idle machine can take any of those hires, so giving the idle machines to the dearest hires saves the most. Unconfirmed machines then go to the next-dearest and are counted separately.</li>
+    <li><b>Words</b>: categories, statuses, suppliers, depots, rate bases and GST go through the master-data mapping (<span class="mono">mdm/aliases.csv</span>): Truck &amp; dog and T&amp;D are Tipper, Ute is Light vehicle, Smooth drum is Roller, Bobcat is Skid steer.</li>
+    <li><b>Not included</b>: carting the owned machine to site, its running cost and operator, and any notice period or minimum hire in the supplier's contract. None of these are in the data.</li>
+    <li>Built from pipeline run <span class="mono">${esc(m.run_id)}</span>; FieldTrax sync <span class="mono">${esc(W.fieldtrax_run)}</span>.</li></ul>`;
+}
+
+/* ---------- side panel ---------- */
+function openPanel(html) {
+  $("#panel-body").innerHTML = html;
+  $("#panel").hidden = false; $("#scrim").hidden = false; $("#panel-close").focus();
+}
+function closePanel() { $("#panel").hidden = true; $("#scrim").hidden = true; }
+
+function hireRecord(h) {
+  return `<div class="record"><div><b>${esc(h.hire_no)}</b> <span class="ref">${ref(h.tab, h.row)}</span> ${h.outcome === "end_confirmed" ? statusChip(h) : h.outcome === "end_unconfirmed" ? statusChip(h) : ""}</div>
+    <dl class="kv">
+      <dt>Supplier</dt><dd>${esc(h.supplier)}${h.supplier_raw !== h.supplier ? ` <span class="muted">(written "${esc(h.supplier_raw)}")</span>` : ""}</dd>
+      <dt>Type</dt><dd>${esc(h.category)}${h.category_raw !== h.category ? ` <span class="muted">(written "${esc(h.category_raw)}")</span>` : ""}</dd>
+      <dt>Project</dt><dd>${esc(h.project_code)} ${esc(h.project_name)}, ${esc(h.state)} · ${esc(h.business)}${h.project_raw !== h.project_code ? ` <span class="muted">(written "${esc(h.project_raw)}")</span>` : ""}</dd>
+      <dt>Start</dt><dd>${fmtDate(h.start)} <span class="muted">(written "${esc(h.start_raw)}")</span></dd>
+      <dt>Off-hire</dt><dd>${h.off_hire ? fmtDate(h.off_hire) : "still on hire"} <span class="muted">(written "${esc(h.off_hire_raw ?? "blank")}")</span></dd>
+      <dt>Rate</dt><dd>${esc(h.working)}</dd>
+      <dt>A day</dt><dd class="num"><b>${aud(h.day_ex)}</b> ex GST · ${aud(h.day_inc)} inc GST</dd>
+      ${h.notes ? `<dt>Notes</dt><dd>${esc(h.notes)}</dd>` : ""}
+      ${h.comments ? `<dt>Comment</dt><dd>${esc(h.comments)}</dd>` : ""}
+    </dl>
+    ${reasonList(h)}</div>`;
+}
+
+function machineRecord(m) {
+  const chip = { confirmed: `<span class="chip ok">Idle, confirmed</span>`, unconfirmed: `<span class="chip unc">Idle, unconfirmed</span>`, working: `<span class="chip bad">Working per tracker</span>` }[m.idle_status];
+  return `<div class="record"><div><b>${esc(machineLabel(m))}</b> ${chip} <span class="ref">${esc(m.source_refs)}</span></div>
+    <dl class="kv">
+      <dt>Type</dt><dd>${esc(m.category)}${m.make ? ` · ${esc(m.make)} ${esc(m.model)}` : ""}</dd>
+      <dt>Depot</dt><dd>${esc(m.depot)}, ${esc(m.state)}</dd>
+      <dt>Register says</dt><dd>${esc(m.status_label)} <span class="ref">${ref(m.source_tab, m.source_row)}</span></dd>
+      <dt>FieldTrax</dt><dd>${m.device_ids ? `<span class="mono">${esc(m.device_ids)}</span> · ${m.readings_in_window ?? 0} readings 18–31 Oct${m.last_reading ? ` · last ${fmtTime(m.last_reading)}` : ""}` : "no device"}</dd>
+      <dt>Hours run</dt><dd>${m.hours_run == null ? "—" : `${m.hours_run} h (sum of positive increases between readings, all devices)`}</dd>
+      <dt>Verdict</dt><dd>${esc(m.idle_reason)}</dd>
+    </dl>${spark(m.machine_id, 300, 56)}</div>`;
+}
+
+const VIEWS = {
+  confirmed: () => ({ title: `${endConfirmed.length} hires that could end, confirmed`, total: sum(endConfirmed, (h) => h.day_ex), items: endConfirmed.map(hireRecord) }),
+  unconfirmed: () => ({ title: `${endUnconfirmed.length} hires that could end, unconfirmed`, total: sum(endUnconfirmed, (h) => h.day_ex), items: endUnconfirmed.map(hireRecord) }),
+  onhire: () => ({ title: `${live.length} hires on hire now (${hires.length} lines)`, total: sum(live, (h) => h.day_ex), items: hires.map(hireRecord) }),
+  nomatch: () => ({ title: `${noMatch.length} hires with nothing idle to swap in`, total: sum(noMatch, (h) => h.day_ex), items: noMatch.map(hireRecord) }),
+  available: () => ({ title: `${avail.length} owned machines the register shows as available`, items: avail.map(machineRecord) }),
+  working: () => ({ title: `${working.length} machines the register shows available but the tracker shows working`, items: working.map(machineRecord) }),
+};
+
+function showView(key) {
+  const v = VIEWS[key]();
+  const total = v.total != null ? `<p class="num">Total ${aud(v.total)} a day ex GST, added up from the ${v.items.length} records below.</p>` : "";
+  openPanel(`<h2 id="panel-title">${esc(v.title)}</h2>${total}<div>${v.items.join("")}</div>`);
+}
+
+function signOffBlock() {
+  if (signOff && signOff.rule) {
+    return `<div class="box"><h3>Who signs</h3><p style="margin:0;font-size:18px"><b>${signOff.approvers.map(esc).join(", ")}</b></p>
+      <p style="margin:0">${esc(signOff.rule)}</p><span class="muted">Source: ${esc(signOff.source)}</span></div>`;
+  }
+  return `<div class="box unc"><h3>Who signs <span class="chip unc">Unconfirmed</span></h3>
+    <p style="margin:0">The sign-off rule for ending a hire is not in the register, the READ ME or FieldTrax. Until it is supplied, this proposal has no named approver and cannot go anywhere.</p></div>`;
+}
+
+function proposalText(h) {
+  const m = machines.get(h.machine_id);
+  return [
+    `PROPOSAL (not actioned): end hire ${h.hire_no} (${ref(h.tab, h.row)})`,
+    `Supplier: ${h.supplier} · ${h.category} on ${h.project_code} ${h.project_name} (${h.state})`,
+    `Replace with: ${machineLabel(m)} from ${m.depot} (${ref(m.source_tab, m.source_row)})`,
+    `Saving: ${aud(h.day_ex)} a day ex GST (${aud(h.day_inc)} inc GST)`,
+    `Status: ${h.outcome === "end_confirmed" ? "confirmed" : "UNCONFIRMED: " + h.unconfirmed.join(" | ")}`,
+    `Sign-off: ${signOff && signOff.rule ? signOff.approvers.join(", ") : "UNCONFIRMED: rule not supplied"}`,
+  ].join("\n");
+}
+
+function showProposal(row) {
+  const h = hires.find((x) => x.row === row), m = machines.get(h.machine_id);
+  const planned = h.days_to_planned_off_hire
+    ? `<li>The hire is already due off on <b>${fmtDate(h.off_hire)}</b>, ${h.days_to_planned_off_hire} working days after ${fmtDate(DATA.meta.as_of)}. Ending it now saves up to <b>${aud(h.saving_to_planned_off_hire)}</b> ex GST before then.</li>`
+    : `<li>No off-hire date is set (${esc(h.off_hire_raw ?? "blank")}), so the saving runs until the job no longer needs the machine.</li>`;
+  const drafted = proposals.includes(row);
+  openPanel(`<span class="eyebrow">Proposal · nothing is sent or changed</span>
+    <h2 id="panel-title">End ${esc(h.hire_no)} and use ${esc(machineLabel(m))} instead</h2>
+    ${h.outcome === "end_unconfirmed" ? `<div class="box unc"><h3>Unconfirmed</h3><ul class="reasons" style="margin:0">${h.unconfirmed.map((r) => `<li>${esc(r)}</li>`).join("")}</ul></div>` : ""}
+    <div class="box"><h3>What would happen</h3><ol class="steps">
+      <li>${esc(h.supplier)} is asked to off-hire the ${esc(h.category.toLowerCase())} on ${esc(h.hire_no)}. On Hires 25-26 row ${h.row}, Off-hire changes from "${esc(h.off_hire_raw ?? "blank")}" to the agreed date.</li>
+      <li>${esc(machineLabel(m))} goes from ${esc(m.depot)} to ${esc(h.project_code)} ${esc(h.project_name)}. On ${esc(m.source_tab)} row ${m.source_row}, Status changes from Available to On project.</li>
+      <li>Hire cost stops: <b>${aud(h.day_ex)}</b> a day ex GST (${aud(h.day_inc)} inc GST).</li>
+      ${planned}
+    </ol></div>
+    <div class="box unc"><h3>Not known from the data <span class="chip unc">Unconfirmed</span></h3><ul class="steps">
+      <li>Notice period or minimum hire term with ${esc(h.supplier)}${h.basis_raw === "mth" ? ". This is a monthly rate, so the month may be charged in full." : "."}</li>
+      <li>Cost of carting ${esc(machineLabel(m))} from ${esc(m.depot)} to site, and its running cost and operator.</li>
+      <li>Whether the owned ${esc(m.category.toLowerCase())} matches the hired one's spec (bucket, attachments). The register only gives the type.</li>
+    </ul></div>
+    ${signOffBlock()}
+    <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn" id="draft-btn" data-row="${row}" type="button">${drafted ? "Remove from drafts" : "Add to drafted proposals"}</button></div>
+    <div class="box"><h3>The two records</h3>${hireRecord(h)}${machineRecord(m)}</div>`);
+}
+
+function showHire(row) { openPanel(`<h2 id="panel-title">Hire record</h2>${hireRecord(hires.find((h) => h.row === row))}${hires.find((h) => h.row === row).machine_id ? machineRecord(machines.get(hires.find((h) => h.row === row).machine_id)) : ""}`); }
+function showMachine(id) { openPanel(`<h2 id="panel-title">Machine record</h2>${machineRecord(machines.get(id))}`); }
+
+function showTray() {
+  const items = proposals.map((r) => hires.find((h) => h.row === r)).filter(Boolean);
+  const text = items.map(proposalText).join("\n\n");
+  openPanel(`<h2 id="panel-title">${items.length} drafted proposals</h2>
+    <p>Total ${aud(sum(items, (h) => h.day_ex))} a day ex GST. Nothing has been sent, and the register is unchanged. Copy this to send for sign-off.</p>
+    <textarea id="tray-text" readonly>${esc(text)}</textarea>
+    <div><button class="btn" id="copy-btn" type="button">Copy text</button> <span id="copy-msg" class="muted"></span></div>`);
+}
+
+function renderTray() {
+  const items = proposals.map((r) => hires.find((h) => h.row === r)).filter(Boolean);
+  $("#tray").hidden = items.length === 0;
+  $("#tray-count").textContent = items.length;
+  $("#tray-total").textContent = aud(sum(items, (h) => h.day_ex));
+}
+
+function toggleDraft(row) {
+  proposals = proposals.includes(row) ? proposals.filter((r) => r !== row) : [...proposals, row];
+  saveProposals(); renderSwaps(); renderTray();
+}
+
+document.addEventListener("click", async (e) => {
+  const t = e.target.closest("button");
+  if (!t) return;
+  if (t.dataset.world) { setWorld(t.dataset.world); return renderAll(); }
+  if (t.dataset.show) return showView(t.dataset.show);
+  if (t.dataset.hire) return showHire(Number(t.dataset.hire));
+  if (t.dataset.machine) return showMachine(t.dataset.machine);
+  if (t.dataset.propose) return showProposal(Number(t.dataset.propose));
+  if (t.id === "draft-btn") { toggleDraft(Number(t.dataset.row)); return showProposal(Number(t.dataset.row)); }
+  if (t.id === "panel-close") return closePanel();
+  if (t.id === "tray-view") return showTray();
+  if (t.id === "tray-clear") { proposals = []; saveProposals(); renderSwaps(); return renderTray(); }
+  if (t.id === "copy-btn") {
+    const area = $("#tray-text");
+    try { await navigator.clipboard.writeText(area.value); $("#copy-msg").textContent = "Copied."; }
+    catch { area.focus(); area.select(); $("#copy-msg").textContent = "Selected. Press Ctrl+C or ⌘C to copy."; }
+  }
+});
+$("#scrim").addEventListener("click", closePanel);
+
+document.addEventListener("keydown", (e) => { if (e.key === "Escape" && !$("#panel").hidden) closePanel(); });
+
+function renderAll() { renderHeader(); renderAnswer(); renderTiles(); renderQuestions(); renderSwaps(); renderWorking(); renderNoMatch(); renderRules(); renderTray(); }
+renderAll();
+</script>
+</body>
+</html>

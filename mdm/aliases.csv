@@ -1,0 +1,88 @@
+domain,alias,canonical,basis,note
+category,20T Digger,Excavator 20t,readme,"READ ME: Digger is Excavator"
+category,EX20,Excavator 20t,readme,"READ ME: EX20 and EX5 too"
+category,20T Excavator,Excavator 20t,variant,word order
+category,20 tonne excavator,Excavator 20t,variant,
+category,5T Digger,Excavator 5t,readme,"READ ME: Digger is Excavator"
+category,EX5,Excavator 5t,readme,"READ ME: EX20 and EX5 too"
+category,5T Excavator,Excavator 5t,variant,word order
+category,Mini excavator,Excavator 5t,regional,
+category,Mini digger,Excavator 5t,regional,
+category,Bobcat,Skid steer,readme,"Brand used as a type. Bobcat is also a Make; only the type column maps here"
+category,Skidsteer,Skid steer,variant,
+category,Skid steer loader,Skid steer,variant,
+category,Water truck,Water cart,readme,READ ME
+category,WC,Water cart,readme,READ ME
+category,Water tanker,Water cart,regional,
+category,Truck & dog,Tipper,readme,READ ME
+category,T&D,Tipper,readme,READ ME
+category,Tipper truck,Tipper,variant,
+category,Tip truck,Tipper,regional,
+category,Dump truck,Tipper,regional,North American / UK term
+category,Smooth drum,Roller,readme,READ ME
+category,Smooth drum roller,Roller,variant,
+category,Vibe roller,Roller,regional,
+category,Ute,Light vehicle,readme,"READ ME. Australian / NZ word"
+category,Utility,Light vehicle,regional,Australian
+category,Pickup,Light vehicle,regional,North American / UK term
+category,Pick-up,Light vehicle,regional,
+category,Bakkie,Light vehicle,regional,South African term
+category,LV,Light vehicle,variant,fleet prefix
+category,Genset,Generator,readme,READ ME
+category,Gen set,Generator,variant,
+category,Genny,Generator,regional,
+status,Available,available,variant,BE word
+status,Yard,available,readme,"READ ME: Yard and Available mean the same thing"
+status,On project,on_project,variant,BE word
+status,On job,on_project,inferred,NH word; not in READ ME
+status,On site,on_project,inferred,
+status,Workshop,workshop,variant,BE word
+status,Repairs,workshop,inferred,NH word; not in READ ME
+status,In for service,workshop,inferred,
+status,Disposed,disposed,variant,BE word
+status,Sold,disposed,readme,"READ ME: Sold and Disposed too"
+status,Written off,disposed,inferred,
+supplier,Southgate,Southgate Plant Hire,variant,short name
+supplier,Southgate Plant,Southgate Plant Hire,variant,short name
+supplier,Murrawa,Murrawa Equipment,variant,short name
+supplier,Hirewell,Hirewell Pty Ltd,variant,without company suffix
+supplier,Hire Well,Hirewell Pty Ltd,inferred,"Spelt as two words; could be a different business"
+supplier,Tidal Earthmoving,Tidal Earthmoving Pty Ltd,variant,without company suffix
+site,Brisbane,Brisbane Yard,variant,
+site,Bris Yard,Brisbane Yard,variant,
+rate_basis,daily,day,variant,
+rate_basis,per day,day,variant,
+rate_basis,pd,day,variant,
+rate_basis,d,day,variant,
+rate_basis,week,wk,variant,
+rate_basis,weekly,wk,variant,
+rate_basis,per week,wk,variant,
+rate_basis,pw,wk,variant,
+rate_basis,w,wk,variant,
+rate_basis,month,mth,variant,
+rate_basis,monthly,mth,variant,
+rate_basis,per month,mth,variant,
+rate_basis,pm,mth,variant,
+rate_basis,mo,mth,variant,
+gst,incl,inc,variant,
+gst,inc gst,inc,variant,
+gst,including,inc,variant,
+gst,incl gst,inc,variant,
+gst,excl,ex,variant,
+gst,ex gst,ex,variant,
+gst,excluding,ex,variant,
+gst,plus gst,ex,variant,
+gst,+gst,ex,variant,
+business,Brackenfield,BE,variant,
+business,Brackenfield Earthworks,BE,variant,
+business,Norland,NH,variant,
+business,Norland Haulage,NH,variant,
+unit,hours,h,variant,
+unit,hrs,h,variant,
+unit,hr,h,variant,
+unit,seconds,s,variant,
+unit,sec,s,variant,
+category,Drum roller,Roller,variant,
+category,Smooth roller,Roller,variant,
+category,SD roller,Roller,variant,
+category,Smooth drum compactor,Roller,variant,

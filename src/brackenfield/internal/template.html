@@ -1,0 +1,355 @@
+<!doctype html>
+<html lang="en-AU">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Brackenfield DQ Console</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Source+Sans+3:wght@400;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: an operator's console. Tab bar across the top, each tab a stack of
+   chart -> table -> raw records, densest at the bottom. Internal: data first, no chrome. */
+:root {
+  --ground: #f1f2f0; --panel: #fcfcfb; --ink: #141714; --muted: #555a55; --line: #d7dad6;
+  --accent: #1f5f8b; --accent-soft: #e2edf5;
+  --crit: #d03b3b; --warn: #fab219; --good: #0ca30c; --info: #9a9c96;
+  --s1: #2a78d6; --s2: #eb6834; --s3: #1baf7a; --s4: #eda100; --s5: #e87ba4; --s6: #008300; --s7: #4a3aa7;
+  --font-display: "Barlow Condensed", "Arial Narrow", sans-serif;
+  --font-body: "Source Sans 3", "Segoe UI", system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, Menlo, monospace;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --ground: #121311; --panel: #1a1a19; --ink: #f2f2ee; --muted: #a9aaa2; --line: #30312d;
+    --accent: #7fb3dc; --accent-soft: #1e2a33; --info: #6f716b;
+    --s1: #3987e5; --s2: #d95926; --s3: #199e70; --s4: #c98500; --s5: #d55181; --s6: #008300; --s7: #9085e9;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --ground: #121311; --panel: #1a1a19; --ink: #f2f2ee; --muted: #a9aaa2; --line: #30312d;
+  --accent: #7fb3dc; --accent-soft: #1e2a33; --info: #6f716b;
+  --s1: #3987e5; --s2: #d95926; --s3: #199e70; --s4: #c98500; --s5: #d55181; --s6: #008300; --s7: #9085e9;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html, body { margin: 0; }
+body { background: var(--ground); color: var(--ink); font: 400 14px/1.45 var(--font-body); padding-inline: 16px; padding-block: max(16px, env(safe-area-inset-top, 0px)) 48px; }
+.wrap { max-width: 1320px; margin-inline: auto; display: grid; gap: 16px; grid-template-columns: minmax(0, 1fr); }
+h1, h2 { font-family: var(--font-display); font-weight: 700; margin: 0; letter-spacing: .01em; text-wrap: balance; }
+h1 { font-size: 30px; }
+h2 { font-size: 21px; }
+.eyebrow { font: 600 11px/1.2 var(--font-body); text-transform: uppercase; letter-spacing: .09em; color: var(--muted); }
+.mono { font-family: var(--font-mono); font-size: 12px; }
+.muted { color: var(--muted); }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+header { display: grid; gap: 6px; }
+.meta { display: flex; flex-wrap: wrap; gap: 6px 16px; color: var(--muted); font-size: 13px; }
+.meta b { color: var(--ink); font-weight: 600; }
+
+nav.tabs { display: flex; flex-wrap: wrap; gap: 4px; border-bottom: 1px solid var(--line); }
+nav.tabs button { all: unset; cursor: pointer; padding: 8px 12px; border-bottom: 2px solid transparent; font-weight: 600; color: var(--muted); }
+nav.tabs button[aria-selected="true"] { color: var(--ink); border-bottom-color: var(--accent); }
+nav.tabs button:focus-visible { outline: 2px solid var(--accent); }
+.count { font: 500 11px/1 var(--font-mono); background: var(--accent-soft); color: var(--accent); padding: 2px 6px; border-radius: 999px; margin-left: 4px; }
+
+section.tab { display: grid; gap: 16px; grid-template-columns: minmax(0, 1fr); }
+.card { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 14px 16px; display: grid; gap: 10px; min-width: 0; grid-template-columns: minmax(0, 1fr); align-content: start; }
+.chart { max-width: 100%; }
+.card p { margin: 0; max-width: 90ch; }
+.kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; }
+.kpi { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; display: grid; gap: 2px; }
+.kpi .v { font: 700 28px/1.05 var(--font-display); font-variant-numeric: tabular-nums; }
+.kpi .l { font-size: 12px; color: var(--muted); }
+.grid2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(520px, 100%), 1fr)); gap: 16px; }
+
+.tablewrap { overflow-x: auto; max-height: 560px; overflow-y: auto; border: 1px solid var(--line); border-radius: 6px; }
+table { border-collapse: collapse; width: 100%; font-size: 13px; }
+th { position: sticky; top: 0; background: var(--panel); text-align: left; font: 600 11px/1.3 var(--font-body); text-transform: uppercase; letter-spacing: .06em; color: var(--muted); padding: 7px 9px; border-bottom: 1px solid var(--line); white-space: nowrap; cursor: pointer; }
+td { padding: 6px 9px; border-bottom: 1px solid var(--line); vertical-align: top; }
+td.n, th.n { text-align: right; font-variant-numeric: tabular-nums; }
+tr:last-child td { border-bottom: 0; }
+.filters { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.filters input, .filters select { font: inherit; color: var(--ink); background: var(--panel); border: 1px solid var(--line); border-radius: 6px; padding: 5px 8px; }
+.filters input { min-width: 0; flex: 1 1 220px; }
+.filters select { max-width: 100%; min-width: 0; }
+
+.sev { display: inline-flex; align-items: center; gap: 5px; font-weight: 600; white-space: nowrap; }
+.sev::before { content: ""; width: 9px; height: 9px; border-radius: 2px; background: var(--info); }
+.sev.error::before { background: var(--crit); }
+.sev.warning::before { background: var(--warn); }
+.sev.pass::before { background: var(--good); }
+.chip { display: inline-block; padding: 0 7px; border-radius: 999px; font-size: 12px; border: 1px solid var(--line); white-space: nowrap; }
+.chip.review { border-style: dashed; border-color: var(--warn); }
+.chip.bad { border-color: var(--crit); color: var(--crit); }
+
+.legend { display: flex; flex-wrap: wrap; gap: 6px 14px; font-size: 12px; color: var(--muted); }
+.legend span { display: inline-flex; align-items: center; gap: 5px; }
+.sw { width: 10px; height: 10px; border-radius: 2px; display: inline-block; }
+svg text { fill: var(--muted); font: 11px var(--font-body); }
+svg .grid { stroke: var(--line); stroke-width: 1; }
+.tip { position: fixed; pointer-events: none; z-index: 30; background: var(--panel); color: var(--ink); border: 1px solid var(--line); border-radius: 6px; padding: 6px 9px; font-size: 12px; box-shadow: 0 4px 18px rgba(0,0,0,.15); max-width: 280px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <span class="eyebrow">Internal · data team · not for Priya</span>
+    <h1>Brackenfield DQ Console</h1>
+    <div class="meta" id="meta"></div>
+  </header>
+  <nav class="tabs" id="tabs" role="tablist"></nav>
+  <main id="main"></main>
+</div>
+<div class="tip" id="tip" hidden></div>
+
+<script>
+const D = /*__DATA__*/null;
+const $ = (s) => document.querySelector(s);
+const esc = (v) => String(v ?? "").replace(/[&<>"']/g, (c) => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const num = (n) => n == null ? "—" : Number(n).toLocaleString("en-AU");
+const parse = (v) => { if (v == null) return {}; if (typeof v === "string") { try { return JSON.parse(v); } catch { return {}; } } return v; };
+const shortRun = (id) => String(id || "").replace(/^run_(\d{4})(\d{2})(\d{2})T(\d{2})(\d{2})(\d{2}).*$/, "$3/$2 $4:$5:$6");
+const latest = D.runs[D.runs.length - 1] || {};
+const sevClass = (s) => ({ error: "error", warning: "warning", info: "info" }[s] || "info");
+
+/* ---------- tooltip ---------- */
+const tip = $("#tip");
+document.addEventListener("pointermove", (e) => {
+  const t = e.target.closest("[data-tip]");
+  if (!t) { tip.hidden = true; return; }
+  tip.innerHTML = t.getAttribute("data-tip"); tip.hidden = false;
+  const x = Math.min(e.clientX + 14, window.innerWidth - tip.offsetWidth - 8);
+  tip.style.left = `${x}px`; tip.style.top = `${e.clientY + 14}px`;
+});
+
+/* ---------- generic sortable, filterable table ---------- */
+function table(id, rows, cols, opts = {}) {
+  const state = { sort: opts.sort || null, dir: 1, q: "" };
+  const host = document.getElementById(id);
+  const selects = (opts.facets || []).map((f) => {
+    const vals = [...new Set(rows.map((r) => r[f]).filter((v) => v != null))].sort();
+    return `<select data-facet="${f}" aria-label="Filter ${f}"><option value="">All ${esc(f.replace(/_/g, " "))}</option>${vals.map((v) => `<option>${esc(v)}</option>`).join("")}</select>`;
+  }).join("");
+  host.innerHTML = `<div class="filters"><input type="search" placeholder="Filter rows…" aria-label="Filter rows" id="${id}-q">${selects}<span class="muted" id="${id}-n"></span></div><div class="tablewrap"><table id="${id}-t"></table></div>`;
+  const facetState = {};
+  function draw() {
+    let r = rows.filter((row) => Object.entries(facetState).every(([k, v]) => !v || String(row[k]) === v));
+    if (state.q) { const q = state.q.toLowerCase(); r = r.filter((row) => cols.some((c) => String(row[c.k] ?? "").toLowerCase().includes(q))); }
+    if (state.sort) r = [...r].sort((a, b) => { const x = a[state.sort], y = b[state.sort]; return (x > y ? 1 : x < y ? -1 : 0) * state.dir; });
+    document.getElementById(`${id}-n`).textContent = `${r.length} of ${rows.length}`;
+    document.getElementById(`${id}-t`).innerHTML = `<thead><tr>${cols.map((c) => `<th class="${c.n ? "n" : ""}" data-k="${c.k}">${esc(c.h)}${state.sort === c.k ? (state.dir > 0 ? " ↑" : " ↓") : ""}</th>`).join("")}</tr></thead>
+      <tbody>${r.map((row) => `<tr>${cols.map((c) => `<td class="${c.n ? "n" : ""}">${c.f ? c.f(row[c.k], row) : esc(row[c.k])}</td>`).join("")}</tr>`).join("")}</tbody>`;
+  }
+  host.addEventListener("input", (e) => {
+    if (e.target.id === `${id}-q`) state.q = e.target.value;
+    if (e.target.dataset.facet) facetState[e.target.dataset.facet] = e.target.value;
+    draw();
+  });
+  host.addEventListener("click", (e) => {
+    const th = e.target.closest("th"); if (!th) return;
+    state.dir = state.sort === th.dataset.k ? -state.dir : 1; state.sort = th.dataset.k; draw();
+  });
+  draw();
+}
+
+/* ---------- stacked bar chart (vertical or horizontal), shared by three tabs ---------- */
+function stacked({ groups, keys, colors, value, label, horizontal = false, w = 640, h = 240 }) {
+  const totals = groups.map((g) => keys.reduce((a, k) => a + (value(g, k) || 0), 0));
+  const max = Math.max(1, ...totals);
+  const pad = horizontal ? { l: 110, r: 40, t: 6, b: 22 } : { l: 40, r: 10, t: 10, b: 34 };
+  const iw = w - pad.l - pad.r, ih = h - pad.t - pad.b;
+  const band = (horizontal ? ih : iw) / groups.length, thick = Math.min(28, band * 0.62);
+  const ticks = niceTicks(max);
+  let s = `<svg class="chart" viewBox="0 0 ${w} ${h}" width="${w}" style="width:100%;max-width:${w}px;height:auto" role="img" aria-label="Stacked bars">`;
+  for (const t of ticks) {
+    const p = horizontal ? pad.l + (t / ticks[ticks.length - 1]) * iw : pad.t + ih - (t / ticks[ticks.length - 1]) * ih;
+    s += horizontal ? `<line class="grid" x1="${p}" x2="${p}" y1="${pad.t}" y2="${pad.t + ih}"/><text x="${p}" y="${h - 6}" text-anchor="middle">${num(t)}</text>`
+                    : `<line class="grid" x1="${pad.l}" x2="${pad.l + iw}" y1="${p}" y2="${p}"/><text x="${pad.l - 6}" y="${p + 4}" text-anchor="end">${num(t)}</text>`;
+  }
+  const top = ticks[ticks.length - 1];
+  groups.forEach((g, i) => {
+    let acc = 0;
+    const c = (horizontal ? pad.t : pad.l) + band * i + (band - thick) / 2;
+    keys.forEach((k, ki) => {
+      const v = value(g, k) || 0; if (!v) return;
+      const len = (v / top) * (horizontal ? iw : ih);
+      const start = (acc / top) * (horizontal ? iw : ih); acc += v;
+      const gap = 2; // surface gap between stacked segments
+      const tipText = `<b>${esc(label(g))}</b><br>${esc(k)}: ${num(v)}`;
+      s += horizontal
+        ? `<rect x="${pad.l + start}" y="${c}" width="${Math.max(1, len - gap)}" height="${thick}" rx="2" fill="${colors[ki]}" data-tip="${esc(tipText)}"/>`
+        : `<rect x="${c}" y="${pad.t + ih - start - len + gap}" width="${thick}" height="${Math.max(1, len - gap)}" rx="2" fill="${colors[ki]}" data-tip="${esc(tipText)}"/>`;
+    });
+    s += horizontal
+      ? `<text x="${pad.l - 8}" y="${c + thick / 2 + 4}" text-anchor="end">${esc(label(g))}</text><text x="${pad.l + (totals[i] / top) * iw + 6}" y="${c + thick / 2 + 4}">${num(totals[i])}</text>`
+      : `<text x="${c + thick / 2}" y="${h - 18}" text-anchor="middle">${esc(label(g))}</text>`;
+  });
+  return s + "</svg>" + `<div class="legend">${keys.map((k, i) => `<span><i class="sw" style="background:${colors[i]}"></i>${esc(k)}</span>`).join("")}</div>`;
+}
+function niceTicks(max) {
+  const step = Math.pow(10, Math.floor(Math.log10(max))) * ([1, 2, 5, 10].find((m) => max / (m * Math.pow(10, Math.floor(Math.log10(max)))) <= 5) || 10);
+  const out = []; for (let v = 0; v <= max + step * 0.999; v += step) out.push(v); return out;
+}
+const CAT = ["var(--s1)", "var(--s2)", "var(--s3)", "var(--s4)", "var(--s5)", "var(--s6)", "var(--s7)"];
+
+/* ---------- tabs ---------- */
+const TABS = [
+  ["overview", "Overview"], ["checks", "Checks", D.checks.filter((c) => c.violations > 0).length],
+  ["issues", "Issues", D.issues.length], ["rows", "Row accounting"], ["mdm", "Master data", D.mdm_usage.filter((u) => u.needs_confirmation).length],
+  ["fieldtrax", "FieldTrax"], ["runs", "Runs & changes", D.runs.length],
+];
+let current = "overview";
+try { const saved = localStorage.getItem("dq-tab"); if (TABS.some((t) => t[0] === saved)) current = saved; } catch { /* storage unavailable */ }
+const hash = location.hash.slice(1); if (TABS.some((t) => t[0] === hash)) current = hash;
+
+function renderTabs() {
+  $("#tabs").innerHTML = TABS.map(([k, l, n]) => `<button role="tab" aria-selected="${k === current}" data-tab="${k}">${esc(l)}${n ? `<span class="count">${n}</span>` : ""}</button>`).join("");
+}
+$("#tabs").addEventListener("click", (e) => {
+  const b = e.target.closest("[data-tab]"); if (!b) return;
+  current = b.dataset.tab; try { localStorage.setItem("dq-tab", current); } catch { /* ignore */ }
+  renderTabs(); VIEWS[current]();
+});
+
+function sevCell(s) { return `<span class="sev ${sevClass(s)}">${esc(s)}</span>`; }
+function ref(row) { return row.source_tab ? `<span class="mono">${esc(row.source_tab)}${row.source_row != null ? "!" + row.source_row : ""}</span>` : ""; }
+
+/* ---------- views ---------- */
+const VIEWS = {
+  overview() {
+    const sev = (s) => D.issues.filter((i) => i.severity === s).length;
+    const priya = D.issues.filter((i) => i.for_priya).length;
+    const trendRuns = D.runs.map((r) => r.run_id);
+    const trendVal = (run, s) => (D.trend.find((t) => t.run_id === run && t.severity === s) || {}).n || 0;
+    $("#main").innerHTML = `<section class="tab">
+      <div class="kpis">
+        <div class="kpi"><span class="l">Errors</span><span class="v"><span class="sev error"></span>${sev("error")}</span></div>
+        <div class="kpi"><span class="l">Warnings</span><span class="v"><span class="sev warning"></span>${sev("warning")}</span></div>
+        <div class="kpi"><span class="l">Info (auto-handled)</span><span class="v">${sev("info")}</span></div>
+        <div class="kpi"><span class="l">On Priya's list</span><span class="v">${priya}</span></div>
+        <div class="kpi"><span class="l">Checks with hits / total</span><span class="v">${D.checks.filter((c) => c.violations > 0).length} / ${D.checks.length}</span></div>
+        <div class="kpi"><span class="l">New / resolved since last run</span><span class="v">${D.new_issues.length} / ${D.resolved_issues.length}</span></div>
+      </div>
+      <div class="grid2">
+        <div class="card"><h2>Issues per run</h2><p class="muted">Stacked by severity. Hover a bar for the count.</p>
+          ${stacked({ groups: trendRuns, keys: ["error", "warning", "info"], colors: ["var(--crit)", "var(--warn)", "var(--info)"],
+                      value: trendVal, label: shortRun })}
+          <div id="trend-t"></div></div>
+        <div class="card"><h2>Scorecard</h2><p class="muted">Records carrying at least one error or warning, by table.</p><div id="score-t"></div></div>
+      </div>
+      <div class="card"><h2>Table counts</h2><div id="counts-t"></div></div></section>`;
+    table("trend-t", trendRuns.map((r) => ({ run: shortRun(r), run_id: r, error: trendVal(r, "error"), warning: trendVal(r, "warning"), info: trendVal(r, "info") })),
+      [{ k: "run", h: "Run" }, { k: "error", h: "Errors", n: 1 }, { k: "warning", h: "Warnings", n: 1 }, { k: "info", h: "Info", n: 1 }]);
+    table("score-t", D.scorecard, [{ k: "table", h: "Table", f: (v) => `<span class="mono">${esc(v)}</span>` }, { k: "records", h: "Records", n: 1, f: num },
+      { k: "with_error", h: "With error", n: 1, f: num }, { k: "with_error_or_warning", h: "Error or warning", n: 1, f: num }, { k: "clean_pct", h: "Clean %", n: 1 }]);
+    table("counts-t", Object.entries(D.table_counts).map(([t, n]) => ({ t: `clean.${t}`, n })), [{ k: "t", h: "Table", f: (v) => `<span class="mono">${esc(v)}</span>` }, { k: "n", h: "Rows", n: 1, f: num }]);
+  },
+  checks() {
+    $("#main").innerHTML = `<section class="tab"><div class="card"><h2>Every check, last run</h2>
+      <p class="muted">Rule checks are written in checks/*.py; contracts are the pandera schemas. "Previous" is the run before.</p><div id="checks-t"></div></div></section>`;
+    table("checks-t", D.checks.map((c) => ({ ...c, state: c.violations > 0 ? c.severity : "pass", delta: c.previous_violations == null ? null : c.violations - c.previous_violations })), [
+      { k: "check_id", h: "Check", f: (v) => `<span class="mono">${esc(v)}</span>` }, { k: "kind", h: "Kind" }, { k: "entity", h: "Entity" },
+      { k: "state", h: "Result", f: (v) => sevCell(v) }, { k: "violations", h: "Hits", n: 1 },
+      { k: "delta", h: "Δ prev", n: 1, f: (v) => v == null ? "—" : v > 0 ? `+${v}` : String(v) },
+      { k: "for_priya", h: "To Priya", f: (v) => v ? "yes" : "" }, { k: "title", h: "Rule" }, { k: "rationale", h: "Why" },
+    ], { sort: "violations", facets: ["kind", "entity", "severity", "state"] });
+  },
+  issues() {
+    $("#main").innerHTML = `<section class="tab">
+      <div class="card"><h2>All issues, this run</h2><div id="issues-t"></div></div>
+      <div class="grid2"><div class="card"><h2>New since the previous run</h2><div id="new-t"></div></div>
+      <div class="card"><h2>Resolved since the previous run</h2><div id="res-t"></div></div></div></section>`;
+    const cols = [{ k: "severity", h: "Severity", f: sevCell }, { k: "check_id", h: "Check", f: (v) => `<span class="mono">${esc(v)}</span>` },
+      { k: "entity", h: "Entity" }, { k: "entity_key", h: "Record" }, { k: "source_tab", h: "Where", f: (_v, r) => ref(r) },
+      { k: "field", h: "Field" }, { k: "raw_value", h: "Written as", f: (v) => `<span class="mono">${esc(String(v ?? "").slice(0, 160))}</span>` },
+      { k: "message", h: "Message" }, { k: "for_priya", h: "To Priya", f: (v) => v ? "yes" : "" }];
+    table("issues-t", D.issues, cols, { facets: ["severity", "check_id", "entity", "source_tab", "for_priya"] });
+    table("new-t", D.new_issues, cols.slice(0, 8));
+    table("res-t", D.resolved_issues, cols.slice(0, 8));
+  },
+  rows() {
+    const sheets = [...new Set(D.accounting.map((a) => a.sheet_name))];
+    const kinds = ["record", "header", "title", "subtotal", "total", "documentation", "blank"];
+    const val = (s, k) => (D.accounting.find((a) => a.sheet_name === s && a.disposition === k) || {}).n || 0;
+    $("#main").innerHTML = `<section class="tab">
+      <div class="card"><h2>Every workbook row has a disposition</h2>
+        <p class="muted">Rows 1 to the last used row of every tab, hidden tabs included. Only "record" rows become data; WB001 proves each one reached a clean table. Hover a segment for the count.</p>
+        ${stacked({ groups: sheets, keys: kinds, colors: CAT, value: val, label: (s) => s, horizontal: true, w: 760, h: 40 + sheets.length * 34 })}
+        <div id="acc-t"></div></div>
+      <div class="card"><h2>Rows that are not records</h2><p class="muted">What was set aside and why: titles, headers, typed subtotals and totals, blank rows, the READ ME.</p><div id="nonrec-t"></div></div></section>`;
+    table("acc-t", D.accounting, [{ k: "sheet_name", h: "Tab" }, { k: "sheet_state", h: "State" }, { k: "hidden_cols", h: "Hidden cols" }, { k: "disposition", h: "Disposition" }, { k: "n", h: "Rows", n: 1 }], { facets: ["sheet_name", "disposition"] });
+    table("nonrec-t", D.non_records, [{ k: "sheet_name", h: "Tab" }, { k: "row_num", h: "Row", n: 1 }, { k: "disposition", h: "Disposition" },
+      { k: "first_cell", h: "First cell" }, { k: "value_count", h: "Values", n: 1 }, { k: "comments", h: "Comments" }], { facets: ["sheet_name", "disposition"] });
+  },
+  mdm() {
+    const bases = ["canonical", "variant", "readme", "regional", "inferred", "fuzzy", "unmapped"];
+    const domains = [...new Set(D.mdm_coverage.map((c) => c.domain))];
+    const val = (d, b) => (D.mdm_coverage.find((c) => c.domain === d && c.basis === b) || {}).lines || 0;
+    const review = D.mdm_usage.filter((u) => u.needs_confirmation);
+    const unused = D.mdm_aliases.filter((a) => !a.seen && a.basis !== "canonical");
+    $("#main").innerHTML = `<section class="tab">
+      <div class="kpis">
+        <div class="kpi"><span class="l">Written forms seen</span><span class="v">${D.mdm_usage.length}</span></div>
+        <div class="kpi"><span class="l">Need a decision</span><span class="v">${review.length}</span></div>
+        <div class="kpi"><span class="l">Unmapped</span><span class="v">${D.mdm_usage.filter((u) => !u.canonical).length}</span></div>
+        <div class="kpi"><span class="l">Canonical values</span><span class="v">${D.mdm_canonical.length}</span></div>
+        <div class="kpi"><span class="l">Aliases defined / unused here</span><span class="v">${D.mdm_aliases.filter((a) => a.basis !== "canonical").length} / ${unused.length}</span></div>
+      </div>
+      <div class="card"><h2>Workbook lines by how their words were mapped</h2>
+        <p class="muted">Per domain. Inferred, fuzzy (typo) and unmapped need a person; everything else is mapped by a rule written down in mdm/aliases.csv.</p>
+        ${stacked({ groups: domains, keys: bases, colors: CAT, value: val, label: (d) => d, horizontal: true, w: 760, h: 40 + domains.length * 30 })}
+        <div id="cov-t"></div></div>
+      <div class="card"><h2>Needs a decision</h2><div id="rev-t"></div></div>
+      <div class="card"><h2>Every written form and what it became</h2><div id="use-t"></div></div>
+      <div class="card"><h2>Reference data: aliases</h2><p class="muted">From mdm/canonical.csv and mdm/aliases.csv. "Seen" = matched by at least one value in this workbook.</p><div id="alias-t"></div></div></section>`;
+    table("cov-t", D.mdm_coverage, [{ k: "domain", h: "Domain" }, { k: "basis", h: "Basis" }, { k: "terms", h: "Written forms", n: 1 }, { k: "lines", h: "Lines", n: 1 }], { facets: ["domain", "basis"] });
+    const useCols = [{ k: "domain", h: "Domain" }, { k: "raw_value", h: "Written as", f: (v) => `<span class="mono">${esc(v)}</span>` },
+      { k: "canonical", h: "Canonical", f: (v) => v ? esc(v) : `<span class="chip bad">unmapped</span>` },
+      { k: "basis", h: "Basis", f: (v, r) => `<span class="chip ${r.needs_confirmation ? "review" : ""}">${esc(v || "none")}</span>` },
+      { k: "matched_on", h: "Matched alias" }, { k: "score", h: "Score", n: 1 }, { k: "suggestions", h: "Nearest" },
+      { k: "line_count", h: "Lines", n: 1 }, { k: "source_refs", h: "Where", f: (v) => `<span class="mono">${esc(String(v || "").slice(0, 120))}${String(v || "").length > 120 ? "…" : ""}</span>` }];
+    table("rev-t", review, useCols);
+    table("use-t", D.mdm_usage, useCols, { facets: ["domain", "basis", "canonical"] });
+    table("alias-t", D.mdm_aliases, [{ k: "domain", h: "Domain" }, { k: "written", h: "Alias" }, { k: "key", h: "Match key", f: (v) => `<span class="mono">${esc(v)}</span>` },
+      { k: "canonical", h: "Canonical" }, { k: "basis", h: "Basis" }, { k: "seen", h: "Seen", f: (v) => v ? "yes" : "" }], { facets: ["domain", "basis", "seen"] });
+  },
+  fieldtrax() {
+    const syncs = D.syncs.map((s) => ({ ...s, ...parse(s.stats) }));
+    $("#main").innerHTML = `<section class="tab">
+      <div class="card"><h2>Syncs</h2><p class="muted">Each run's pull from FieldTrax: what arrived, what was new, and what the client had to retry.</p><div id="sync-t"></div></div>
+      <div class="card"><h2>Items that could not be stored or fetched</h2><div id="serr-t"></div></div></section>`;
+    table("sync-t", syncs, [{ k: "run_id", h: "Run", f: (v) => `<span class="mono">${esc(shortRun(v))}</span>` },
+      { k: "devices_listed", h: "Devices", n: 1 }, { k: "readings_received", h: "Readings", n: 1 }, { k: "new_readings", h: "New readings", n: 1 },
+      { k: "new_device_versions", h: "New device versions", n: 1 }, { k: "errors", h: "Errors", n: 1 }, { k: "requests", h: "Requests", n: 1 },
+      { k: "rate_limited", h: "429 retried", n: 1 }, { k: "unavailable", h: "5xx retried", n: 1 }, { k: "transport_errors", h: "Network retried", n: 1 },
+      { k: "bad_pages", h: "Bad pages", n: 1 }, { k: "reauths", h: "Re-auths", n: 1 }]);
+    table("serr-t", D.sync_errors, [{ k: "run_id", h: "Run", f: (v) => `<span class="mono">${esc(shortRun(v))}</span>` }, { k: "scope", h: "Scope" },
+      { k: "device_id", h: "Device" }, { k: "error", h: "Error" }, { k: "payload", h: "As received", f: (v) => `<span class="mono">${esc(String(v ?? "").slice(0, 200))}</span>` }], { facets: ["scope"] });
+  },
+  runs() {
+    const runs = D.runs.map((r) => {
+      const ic = parse(r.issue_counts), cc = parse(r.change_counts);
+      const changes = Object.entries(cc).map(([t, c]) => `${t}: ${Object.entries(c).map(([k, v]) => `${k} ${v}`).join(", ")}`).join("; ");
+      return { ...r, run: shortRun(r.run_id), errors: ic.error, warnings: ic.warning, info: ic.info, changes: changes || "none" };
+    });
+    $("#main").innerHTML = `<section class="tab">
+      <div class="card"><h2>Runs</h2><div id="runs-t"></div></div>
+      <div class="card"><h2>Record changes by run</h2><p class="muted">Distinct records added, removed, changed or only recomputed, per clean table.</p><div id="chg-t"></div></div></section>`;
+    table("runs-t", runs, [{ k: "run", h: "Run" }, { k: "status", h: "Status" }, { k: "fieldtrax_refreshed", h: "FieldTrax", f: (v) => v ? "refreshed" : "not refreshed" },
+      { k: "errors", h: "Errors", n: 1 }, { k: "warnings", h: "Warnings", n: 1 }, { k: "info", h: "Info", n: 1 }, { k: "changes", h: "Changes" },
+      { k: "workbook_sha256", h: "Workbook", f: (v) => `<span class="mono">${esc(String(v).slice(0, 12))}</span>` }], { sort: "run" });
+    table("chg-t", D.changes.map((c) => ({ ...c, run: shortRun(c.run_id) })), [{ k: "run", h: "Run" }, { k: "table_name", h: "Table" },
+      { k: "change_type", h: "Change" }, { k: "records", h: "Records", n: 1 }], { facets: ["run", "table_name", "change_type"] });
+  },
+};
+
+$("#meta").innerHTML = `<span>Latest run <b class="mono">${esc(latest.run_id)}</b></span><span>Status <b>${esc(latest.status)}</b></span>
+  <span>FieldTrax <b>${latest.fieldtrax_refreshed ? "refreshed" : "not refreshed"}</b></span><span>Built ${esc(D.built_at)}</span>`;
+renderTabs(); VIEWS[current]();
+</script>
+</body>
+</html>

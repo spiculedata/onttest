@@ -1,0 +1,33 @@
+[project]
+name = "brackenfield"
+version = "0.1.0"
+description = "Ingest the Brackenfield plant & hire register (and FieldTrax telemetry) into DuckDB with data quality checks"
+authors = [
+    { name = "Tom Barber", email = "tom@spicule.co.uk" }
+]
+requires-python = ">=3.12"
+dependencies = [
+    "duckdb>=2.0.0",
+    "httpx>=0.28.1",
+    "openpyxl>=3.1.5",
+    "pandera[polars]>=0.36.0",
+    "polars>=2.1.0",
+    "pyarrow>=26.0.1",
+]
+
+[project.scripts]
+brackenfield = "brackenfield.cli:main"
+
+[build-system]
+requires = ["uv_build>=0.12.11,<0.13.0"]
+build-backend = "uv_build"
+
+[dependency-groups]
+dev = [
+    "pytest>=9.2.0",
+    "pytest-cov>=7.1.0",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"

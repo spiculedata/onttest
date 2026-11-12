@@ -1,0 +1,7 @@
+org_id,name,org_type,short_code,notes
+org_be,Brackenfield Earthworks,group_business,BE,Owns the BE Plant tab.
+org_nh,Norland Haulage,group_business,NH,Owns the NH Fleet tab. Bought by the group in Jul-25 (READ ME).
+org_hirewell_pty_ltd,Hirewell Pty Ltd,supplier,,"Hire supplier, from Hires 25-26."
+org_murrawa_equipment,Murrawa Equipment,supplier,,"Hire supplier, from Hires 25-26."
+org_southgate_plant_hire,Southgate Plant Hire,supplier,,"Hire supplier, from Hires 25-26."
+org_tidal_earthmoving_pty_ltd,Tidal Earthmoving Pty Ltd,supplier,,"Hire supplier, from Hires 25-26."
