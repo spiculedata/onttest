@@ -14,6 +14,7 @@ from datetime import date
 import polars as pl
 
 from brackenfield import mdm, vocab
+from brackenfield.config import GST_RATE
 from brackenfield.transform.parsing import (
     clean_text,
     date_style,
@@ -128,11 +129,14 @@ def build_hires(hire_rows: pl.DataFrame, projects: pl.DataFrame, as_of: date) ->
         )
         .with_columns(_project_match(projects).alias("project_match"))
         .with_columns(
-            ex_gst(pl.col("rate_amount"), pl.col("gst_treatment")).round(2).alias("rate_ex_gst"),
+            ex_gst(pl.col("rate_amount"), pl.col("gst_treatment")).alias("_ex_exact"),
         )
         .with_columns(
-            (pl.col("rate_ex_gst") * 1.1).round(2).alias("rate_inc_gst"),
-            to_day_rate(pl.col("rate_ex_gst"), pl.col("rate_basis")).round(2).alias("day_rate_ex_gst"),
+            # Rates per period are shown to the cent; the day rate keeps full precision so that totals are
+            # rounded once, at the end (rounding each step put the 44 open hires 2 cents out).
+            pl.col("_ex_exact").round(2).alias("rate_ex_gst"),
+            (pl.col("_ex_exact") * (1 + GST_RATE)).round(2).alias("rate_inc_gst"),
+            to_day_rate(pl.col("_ex_exact"), pl.col("rate_basis")).alias("day_rate_ex_gst"),
             _status(as_of).alias("status"),
         )
     )

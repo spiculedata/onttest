@@ -12,7 +12,7 @@ import polars as pl
 
 from brackenfield.config import WORKING_DAYS_PER_MONTH, WORKING_DAYS_PER_WEEK, Settings
 from brackenfield.screen import analysis as an
-from brackenfield.screen import questions
+from brackenfield.screen import questions, summary
 from brackenfield.transform import telemetry
 
 TEMPLATE = Path(__file__).with_name("template.html")
@@ -44,6 +44,7 @@ class Warehouse:
     syncs: pl.DataFrame
     run_id: str | None
     labels: dict[str, str]
+    be_typed_total: float | None = None
 
 
 def read_warehouse(db_path: Path) -> Warehouse:
@@ -58,9 +59,19 @@ def read_warehouse(db_path: Path) -> Warehouse:
             tables=tables, versions=t("raw.fieldtrax_device_versions"), reading_lines=t("raw.fieldtrax_reading_lines"),
             syncs=t("meta.fieldtrax_syncs").sort("run_id"), run_id=con.execute("SELECT max(run_id) FROM meta.runs").fetchall()[0][0],
             labels=dict(con.execute("SELECT label, run_id FROM meta.run_labels").fetchall()),
+            be_typed_total=_be_typed_total(con),
         )
     finally:
         con.close()
+
+
+def _be_typed_total(con) -> float | None:
+    """The capital cost typed on the BE Plant TOTAL row (never loaded as data; compared with the lines)."""
+    rows = con.execute("""
+        SELECT c.value_text FROM raw.workbook_cells c
+        JOIN raw.workbook_rows r ON r.sheet_name = c.sheet_name AND r.row_num = c.row_num AND r.disposition = 'total'
+        WHERE c.sheet_name = 'BE Plant' AND c.col_letter = 'J'""").fetchall()
+    return float(rows[0][0]) if len(rows) == 1 else None
 
 
 BEFORE_ADVANCE = "before_advance"
@@ -242,6 +253,8 @@ def build_payload(wh: Warehouse, as_of) -> dict:
     lines = wh.tables["machine_lines"]
     start, end = an.idle_window(as_of)
     before_inp, after_inp = world_inputs(wh, as_of, before_run), world_inputs(wh, as_of, after_run)
+    before_world = build_world(before_inp, lines, before_run, wh.tables["mdm_usage"])
+    changes = device_changes(before_inp.devices, after_inp.devices)
     return {
         "meta": {
             "as_of": as_of.isoformat(), "as_of_label": "31 October 2026, end of day AEST",
@@ -253,10 +266,11 @@ def build_payload(wh: Warehouse, as_of) -> dict:
         },
         "sign_off": SIGN_OFF,
         "worlds": {
-            "before": build_world(before_inp, lines, before_run, wh.tables["mdm_usage"]),
+            "before": before_world,
             "after_advance": build_world(after_inp, lines, after_run, wh.tables["mdm_usage"]),
         },
-        "advance_device_changes": device_changes(before_inp.devices, after_inp.devices),
+        "advance_device_changes": changes,
+        "summary": summary.skeleton(wh.tables, wh.be_typed_total, before_inp, after_inp, before_world, changes),
         "dst_check": {"before": dst_check(before_inp.readings, as_of), "after_advance": dst_check(after_inp.readings, as_of)},
     }
 
@@ -272,12 +286,12 @@ def _pair(h: dict, machines: dict[str, dict]) -> dict:
         "hire": {"hire_no": h["hire_no"], "source": {"tab": h["tab"], "row": h["row"]}, "supplier": h["supplier"],
                  "category": h["category"], "project": {"code": h["project_code"], "name": h["project_name"], "state": h["state"]},
                  "business": h["business"], "rate_as_written": {"rate": h["rate_raw"], "basis": h["basis_raw"], "gst": h["gst_raw"]},
-                 "day_rate_ex_gst": h["day_ex"], "working": h["working"]},
+                 "day_rate_ex_gst": round(h["day_ex"], 2), "working": h["working"]},
         "replace_with": {"machine_id": m["machine_id"], "business": m["business_code"], "fleet_no": m["fleet_no"],
                          "category": m["category"], "depot": m["depot"], "state": m["state"], "register_status": m["status_label"],
                          "source": {"tab": m["source_tab"], "row": m["source_row"]}, "fieldtrax_devices": m["device_ids"],
                          "hours_run_18_31_oct": m["hours_run"], "readings_in_window": m["readings_in_window"]},
-        "saving_per_day_ex_gst": h["day_ex"],
+        "saving_per_day_ex_gst": round(h["day_ex"], 2),
         "status": "confirmed" if h["outcome"] == "end_confirmed" else "unconfirmed",
         "unconfirmed_because": h["unconfirmed"], "open_details": h["open_questions"],
         "signs": SIGN_OFF["approvers"],
@@ -286,18 +300,21 @@ def _pair(h: dict, machines: dict[str, dict]) -> dict:
 
 def _world_answer(world: dict) -> dict:
     machines = {m["machine_id"]: m for m in world["machines"]}
-    pairs = [_pair(h, machines) for h in sorted(world["hires"], key=lambda h: -h["day_ex"]) if h["outcome"] in ("end_confirmed", "end_unconfirmed")]
-    confirmed = [p for p in pairs if p["status"] == "confirmed"]
-    unconfirmed = [p for p in pairs if p["status"] == "unconfirmed"]
+    ranked = sorted(world["hires"], key=lambda h: -h["day_ex"])
+    confirmed = [h for h in ranked if h["outcome"] == "end_confirmed"]
+    unconfirmed = [h for h in ranked if h["outcome"] == "end_unconfirmed"]
+    total = lambda hs: round(sum(h["day_ex"] for h in hs), 2)  # noqa: E731  exact day rates, rounded once
     return {
         "fieldtrax_sync": world["fieldtrax_run"],
-        "hires_to_end": confirmed,
-        "saving_per_day_ex_gst": round(sum(p["saving_per_day_ex_gst"] for p in confirmed), 2),
-        "unconfirmed": unconfirmed,
-        "unconfirmed_saving_per_day_ex_gst": round(sum(p["saving_per_day_ex_gst"] for p in unconfirmed), 2),
+        "hires_to_end": [_pair(h, machines) for h in confirmed],
+        "saving_per_day_ex_gst": total(confirmed),
+        "unconfirmed": [_pair(h, machines) for h in unconfirmed],
+        "unconfirmed_saving_per_day_ex_gst": total(unconfirmed),
         "open_hires": len([h for h in world["hires"] if h["outcome"] != "duplicate"]),
         "available_machines": {s: len([m for m in world["machines"] if m["idle_status"] == s]) for s in ("confirmed", "unconfirmed", "working")},
-        "open_questions": [{k: q[k] for k in ("id", "group", "title", "finding", "effect", "effect_per_day", "ask")} for q in world["open_questions"]],
+        "open_questions": [{**{k: q[k] for k in ("id", "group", "title", "finding", "effect", "ask")},
+                            "effect_per_day": None if q["effect_per_day"] is None else round(q["effect_per_day"], 2)}
+                           for q in world["open_questions"]],
     }
 
 
@@ -324,10 +341,18 @@ def answers(payload: dict) -> dict:
     }
 
 
-def build_screen(settings: Settings, out_path: Path, answers_path: Path | None = None) -> Path:
+def _write_json(path: Path, data: dict) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(json.dumps(data, indent=2, default=str, ensure_ascii=False) + "\n")
+
+
+def build_screen(settings: Settings, out_path: Path, answers_path: Path | None = None, detail_path: Path | None = None) -> Path:
+    """The screen, plus answers.json (the brief's skeleton) and the detail behind it (pairs, records, who signs)."""
     payload = build_payload(read_warehouse(settings.database_path), settings.as_of)
     out_path.parent.mkdir(parents=True, exist_ok=True)
     out_path.write_text(render(payload))
     if answers_path:
-        answers_path.write_text(json.dumps(answers(payload), indent=2, default=str, ensure_ascii=False) + "\n")
+        _write_json(answers_path, payload["summary"])
+    if detail_path:
+        _write_json(detail_path, answers(payload))
     return out_path

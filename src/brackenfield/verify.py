@@ -9,7 +9,8 @@ Checks:
   2. every non-empty row has a disposition; every record row is in exactly one clean table
   3. every hire and machine line leads back to its tab and row, and its values match the cells
   4. every machine's source tab/row is one of its own register lines
-  5. answers.json: each pair re-derived from the cells and raw FieldTrax lines; totals; best pairs
+  5. answers_detail.json: each pair re-derived from the cells and raw FieldTrax lines; totals; best pairs
+  6. answers.json (the brief's skeleton): every count recomputed from the cells and raw FieldTrax lines
 """
 
 from __future__ import annotations
@@ -241,7 +242,98 @@ def check_best_pairs(rep: Report, cells, con, answers: dict) -> None:
     rep.check(not worse, "Confirmed pairs are the dearest open hires in each category and state", f"{worse[:5]}")
 
 
-def run(workbook: Path, db: Path, answers_path: Path) -> Report:
+def _money(v) -> float | None:
+    """A capital cost as typed: a number, or text like '$1,234' / '1234.00'. 'TBC' and blanks have none."""
+    if isinstance(v, (int, float)):
+        return float(v)
+    digits = re.sub(r"[$,\s]", "", str(v or ""))
+    return float(digits) if re.fullmatch(r"\d+(\.\d+)?", digits) else None
+
+
+FLEET_NO = re.compile(r"^[A-Z]{2,3}-?\d+$")
+
+
+def _struck_rows(path: Path, sheet: str) -> set[int]:
+    ws = openpyxl.load_workbook(path)[sheet]
+    return {c.row for row in ws.iter_rows() for c in row if c.value is not None and c.font is not None and c.font.strike}
+
+
+def _register_rows(cells) -> dict[str, dict[int, dict]]:
+    return {tab: {n: r for n, r in cells[tab].items() if FLEET_NO.match(_norm(r.get("A")))} for tab in (BE, NH)}
+
+
+def _expected_workbook_counts(cells, struck: set[int]) -> dict:
+    reg = _register_rows(cells)
+    status = {BE: "H", NH: "F"}
+    statuses = [str(r.get(status[tab], "")).strip().lower() for tab, rows in reg.items() for r in rows.values()]
+    transfers = sum(s.startswith("transferred to") for s in statuses)
+    be_costs = [c for c in (_money(r.get("J")) for r in reg[BE].values()) if c is not None]
+    total_row = next(r for r in cells[BE].values() if str(r.get("A", "")).strip().upper() == "TOTAL")
+    hire_rows = {n: r for n, r in cells[HIRES].items() if re.match(r"^H-\d+$", str(r.get("A", "")).strip())}
+    seen, dupes = {}, []
+    for n, r in sorted(hire_rows.items()):
+        key = tuple(sorted(r.items()))
+        (dupes.append(r["A"]) if key in seen else seen.setdefault(key, n))
+    return {
+        "distinct_machines": sum(len(rows) for rows in reg.values()) - transfers,  # a transfer line is a BE machine's old row
+        "owned_disposed": sum(s in ("sold", "disposed") for s in statuses),
+        "transfer_rows": transfers,
+        "be_total_discrepancy": round(sum(be_costs) - float(total_row["J"]), 2),
+        "hire_rows_distinct": len({r["A"] for r in hire_rows.values()}),
+        "cancelled": len({hire_rows[n]["A"] for n in struck if n in hire_rows}),
+        "duplicate_hire": ", ".join(sorted(dupes)),
+    }
+
+
+def _expected_open_hires(cells, con) -> dict:
+    """Which hires are open comes from DuckDB (date parsing is checked elsewhere); the rates come from the cells."""
+    rows = [r["source_row"] for r in _q(con, "SELECT source_row FROM clean.hires WHERE status = 'on_hire' AND NOT is_duplicate_line")]
+    return {"open_hires": len(rows),
+            "open_hire_run_rate_ex_gst_per_day": f"{sum(_day_rate(cells[HIRES][n], str(cells[HIRES][n]['E']).strip()) for n in rows):.2f}"}
+
+
+def _instants(con, run_filter: str) -> set[tuple[str, datetime]]:
+    lines = _q(con, f"SELECT device_id, time FROM raw.fieldtrax_reading_lines WHERE {run_filter}")
+    out = set()
+    for r in lines:
+        try:
+            out.add((r["device_id"], datetime.fromisoformat(r["time"].replace("Z", "+00:00"))))
+        except ValueError:
+            continue  # junk time: not an instant
+    return out
+
+
+def _expected_fieldtrax(cells, con, before_run: str) -> dict:
+    latest = {}
+    for v in _q(con, f"SELECT device_id, name, vin, rego, retired_at, is_listed FROM raw.fieldtrax_device_versions "
+                     f"WHERE sync_run <= '{before_run}' ORDER BY valid_from"):
+        latest[v["device_id"]] = v
+    listed = {d: v for d, v in latest.items() if v["is_listed"]}
+    vins = {_norm(r.get(c)) for tab, rows in _register_rows(cells).items()
+            for r in rows.values() for c in (("F",) if tab == BE else ("D",))} - {""}
+    regos = {_norm(r.get(c)) for tab, rows in _register_rows(cells).items()
+             for r in rows.values() for c in (("E",) if tab == BE else ("C",))} - {""}
+    unmatched = [d for d, v in listed.items() if _norm(v["vin"]) not in vins and _norm(v["rego"]) not in regos]
+    before, after = _instants(con, f"first_seen_run <= '{before_run}'"), _instants(con, "TRUE")
+    return {"devices_total": len(listed), "devices_retired": sum(v["retired_at"] is not None for v in listed.values()),
+            "devices_unmatched": len(unmatched), "readings_distinct": len(before),
+            "readings_added": len(after - before)}
+
+
+def check_skeleton(rep: Report, cells, con, workbook: Path, answers: dict, detail: dict) -> None:
+    before_run = detail["before_advance_sync"]["run"]
+    want = {**_expected_workbook_counts(cells, _struck_rows(workbook, HIRES)), **_expected_open_hires(cells, con),
+            **_expected_fieldtrax(cells, con, before_run)}
+    want["owned_current"] = want["distinct_machines"] - want["owned_disposed"]
+    want["replaceable_hires"] = len(detail["answer"]["hires_to_end"])
+    want["saving_ex_gst_per_day"] = f"{sum(_day_rate(cells[HIRES][p['hire']['source']['row']], p['hire']['business']) for p in detail['answer']['hires_to_end']):.2f}"
+    want["after_advance.readings_added"] = want.pop("readings_added")
+    got = {**answers, **{f"after_advance.{k}": v for k, v in answers.get("after_advance", {}).items()}}
+    bad = [f"{k}: answers.json {got.get(k)!r} vs recomputed {v!r}" for k, v in want.items() if got.get(k) != v]
+    rep.check(not bad, f"answers.json: {len(want)} skeleton values recomputed from the cells and raw FieldTrax lines agree", f"{bad[:5]}")
+
+
+def run(workbook: Path, db: Path, answers_path: Path, detail_path: Path | None = None) -> Report:
     rep = Report()
     cells = _cells(workbook)
     con = duckdb.connect(str(db), read_only=True)
@@ -250,10 +342,13 @@ def run(workbook: Path, db: Path, answers_path: Path) -> Report:
         check_rows_accounted(rep, cells, con)
         check_hires(rep, cells, con)
         check_machines(rep, cells, con)
-        if answers_path.exists():
-            check_answers(rep, cells, con, json.loads(answers_path.read_text()))
-        else:
-            rep.check(False, "answers.json exists", "run `brackenfield screen` first")
+        detail_path = detail_path or answers_path.parent / "out" / "answers_detail.json"
+        if not answers_path.exists() or not detail_path.exists():
+            rep.check(False, "answers.json and answers_detail.json exist", "run `brackenfield screen` first")
+            return rep
+        answers, detail = json.loads(answers_path.read_text()), json.loads(detail_path.read_text())
+        check_answers(rep, cells, con, detail)
+        check_skeleton(rep, cells, con, workbook, answers, detail)
     finally:
         con.close()
     return rep

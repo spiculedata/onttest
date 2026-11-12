@@ -7,7 +7,7 @@ Another $1,024 a day (3 hires) depends on machines FieldTrax can't see, so I hav
 Nothing has been ended. Each hire is a proposal for you to sign.
 
 What I couldn't confirm:
-- $3,346.37 of the total assumes three dates were typed day-first.
+- $3,346.36 of the total assumes three dates were typed day-first.
 - Notice periods, minimum hire and cartage aren't in the register, so savings may start later.
 - 11 machines marked Available have been working.
 - Three spare trackers are running on something.

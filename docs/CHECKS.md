@@ -39,7 +39,7 @@ Severity: **error** = wrong or unusable as written (goes to Priya); **warning** 
 | MC013 | machine | info | Make and model are known | NH Fleet has no Make/Model columns; those machines load with null make/model. | 46 hit(s) |
 | MC014 | machine | warning | Every working machine has a FieldTrax tracker | Machines that are available, on project or in the workshop should report engine hours. | 9 hit(s) |
 | MC015 | machine | warning | An operator mobile belongs to one machine | From the hidden Operator mobile column. One number on two machines may be an operator with a machine and a ute, or a copy-paste error. | 4 hit(s) |
-| DV001 | device | warning | FieldTrax data was refreshed this run | If the API could not be reached, devices and readings come from the last successful snapshot. | pass |
+| DV001 | device | warning | FieldTrax data was refreshed this run | If the API could not be reached, devices and readings come from the last successful snapshot. | 1 hit(s) |
 | DV002 | device | warning | Every device is linked to a register machine | Linked by VIN, then rego, then business + fleet number in the device name. | 3 hit(s) |
 | DV003 | device | error | Device VIN and rego agree with the register | A device linked by rego whose VIN differs (or the reverse) points at the wrong machine or a typo. | pass |
 | DV004 | device | warning | Device name agrees with the linked machine | The name carries business and fleet number ('BE EX-01 Komatsu'); after a transfer it may be stale. | 1 hit(s) |

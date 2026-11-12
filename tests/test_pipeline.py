@@ -164,19 +164,51 @@ def test_answers_json_matches_the_screen_and_names_who_signs(loaded):
         assert pair["signs"] == ["Priya N. (Group Plant Manager)"]
 
 
-def test_independent_verify_passes_and_catches_a_wrong_rate(loaded, tmp_path):
+SKELETON_KEYS = [
+    "distinct_machines", "owned_current", "owned_disposed", "transfer_rows", "be_total_discrepancy", "hire_rows_distinct",
+    "cancelled", "duplicate_hire", "open_hires", "open_hire_run_rate_ex_gst_per_day", "devices_total", "devices_retired",
+    "devices_unmatched", "readings_distinct", "available_no_telemetry", "idle_confirmed", "replaceable_hires",
+    "saving_ex_gst_per_day", "after_advance",
+]
+
+
+def _payload(settings):
+    from brackenfield.screen.build import build_payload, read_warehouse
+
+    return build_payload(read_warehouse(settings.database_path), settings.as_of)
+
+
+def test_answers_json_follows_the_brief_skeleton(loaded):
+    settings, _, _, _ = loaded
+
+    data = _payload(settings)["summary"]
+
+    assert list(data) == SKELETON_KEYS
+    assert list(data["after_advance"]) == ["devices_added", "devices_gone", "devices_renamed", "readings_added"]
+    assert data["duplicate_hire"] == "H-1014" and data["be_total_discrepancy"] == 85000
+    assert data["owned_current"] + data["owned_disposed"] == data["distinct_machines"]
+    assert all(isinstance(data[k], str) and len(data[k].split(".")[1]) == 2
+               for k in ("open_hire_run_rate_ex_gst_per_day", "saving_ex_gst_per_day"))
+
+
+def test_independent_verify_passes_and_catches_wrong_numbers(loaded, tmp_path):
     import json
 
     from brackenfield import verify
-    from brackenfield.screen.build import answers, build_payload, read_warehouse
+    from brackenfield.screen.build import answers
 
     settings, _, _, _ = loaded
-    data = json.loads(json.dumps(answers(build_payload(read_warehouse(settings.database_path), settings.as_of)), default=str))
-    good, bad = tmp_path / "good.json", tmp_path / "bad.json"
-    good.write_text(json.dumps(data))
-    pairs = data["answer"]["hires_to_end"] + data["answer"]["unconfirmed"]
-    pairs[0]["saving_per_day_ex_gst"] += 100
-    bad.write_text(json.dumps(data))
+    payload = _payload(settings)
+    detail = json.loads(json.dumps(answers(payload), default=str))
+    summary = json.loads(json.dumps(payload["summary"], default=str))
+    paths = {name: tmp_path / f"{name}.json" for name in ("detail", "bad_detail", "summary", "bad_summary")}
+    paths["detail"].write_text(json.dumps(detail))
+    paths["summary"].write_text(json.dumps(summary))
+    (detail["answer"]["hires_to_end"] + detail["answer"]["unconfirmed"])[0]["saving_per_day_ex_gst"] += 100
+    paths["bad_detail"].write_text(json.dumps(detail))
+    paths["bad_summary"].write_text(json.dumps({**summary, "cancelled": summary["cancelled"] + 1}))
+    check = lambda a, d: verify.run(settings.workbook_path, settings.database_path, paths[a], paths[d]).failed  # noqa: E731
 
-    assert verify.run(settings.workbook_path, settings.database_path, good).failed == []
-    assert any("rate" in f for f in verify.run(settings.workbook_path, settings.database_path, bad).failed)
+    assert check("summary", "detail") == []
+    assert any("rate" in f for f in check("summary", "bad_detail"))
+    assert any("cancelled" in f for f in check("bad_summary", "detail"))

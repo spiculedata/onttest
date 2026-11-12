@@ -10,7 +10,8 @@ rebuilds the clean layer from scratch, so it is safe to re-run.
 
 | File | What it is |
 |---|---|
-| `answers.json` | The answer as data: the hires to end, the owned machine replacing each, the saving a day (ex GST), what is unconfirmed and why, who signs, the open questions. Covers both the as-of view (FieldTrax before `/__advance`) and `after_advance`. |
+| `answers.json` | The brief's skeleton, flat: machine and hire counts, the BE total discrepancy, the open-hire run rate, device and reading counts before `/__advance`, idle and replaceable counts, the saving a day (ex GST), and what `/__advance` changed. Money is a string to the cent, summed from full-precision day rates and rounded once. |
+| `out/answers_detail.json` | The answer behind those numbers: each hire to end with its tab/row, the owned machine replacing it, its idle hours, what is unconfirmed and why, who signs, the open questions; for both the as-of view and `after_advance`. |
 | `out/priya_screen.html` | Priya's one screen: the same answer, the records behind every number, a proposal panel for each hire, and the open questions. Single self-contained file. |
 | `out/note_for_priya.md` | The note to Priya (under 150 words). |
 | `warehouse/brackenfield.duckdb` | Everything: raw cells and API snapshots, master data, clean records, checks and issues, run history. |
@@ -38,8 +39,11 @@ Day to day: `make run` (workbook + FieldTrax sync), `make run-workbook` (no Fiel
 `make verify` is an independent cross-check: it reads the .xlsx with openpyxl, without the pipeline's
 transforms or master data. It confirms that every cell is stored unchanged and every row is accounted
 for, and that every hire and machine leads back to its tab and row with matching values. It also
-re-derives every pair in `answers.json` from the cells and the raw FieldTrax lines: category, state,
-Available or Yard, rate and GST, idle hours, totals, and that the dearest hires were chosen. `make help` lists them. The CLI behind them is `uv run brackenfield
+re-derives every pair in `out/answers_detail.json` from the cells and the raw FieldTrax lines: category, state,
+Available or Yard, rate and GST, idle hours, totals, and that the dearest hires were chosen. And it
+recomputes 17 of the `answers.json` skeleton values the same way (machine, transfer, disposal and hire
+counts, strike-through cancellations, the BE total, the run rate, device and reading counts, readings
+added by the advance). `make help` lists them. The CLI behind them is `uv run brackenfield
 run | label | screen | internal`. `make demo` resets the kit it talks to; use `KIT_PORT=` to point
 at another one.
 
@@ -119,7 +123,7 @@ changed. Proposals are signed by Priya N., Group Plant Manager: the READ ME name
 register, and the project owner confirmed it. Change `SIGN_OFF` in `screen/build.py` if the rule
 changes. FieldTrax-based findings on the screen (trackers, idle hours, spare trackers) are
 computed separately for the before-advance and after-advance views from each view's own data.
-`make screen` also writes `answers.json`.
+`make screen` also writes `answers.json` and `out/answers_detail.json`.
 
 ## Internal DQ & MDM console (data team, not for Priya)
 

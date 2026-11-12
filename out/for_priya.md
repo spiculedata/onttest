@@ -1,6 +1,6 @@
 # For Priya: things the pipeline could not resolve
 
-Register as of 2026-10-31. Pipeline run `run_20261112T032234873270Z`. 37 item(s).
+Register as of 2026-10-31. Pipeline run `run_20261112T164536083074Z`. 37 item(s).
 Each item names the tab and row it came from. Nothing listed here was dropped; the record is in the database with the value as written.
 
 ## DV002 (warning): Every device is linked to a register machine

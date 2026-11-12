@@ -86,10 +86,10 @@ def _screen(settings: Settings, out: Path | None) -> int:
         return EXIT_BAD_INPUT
     from brackenfield.config import PROJECT_ROOT
 
-    answers_path = PROJECT_ROOT / "answers.json"
-    path = build_screen(settings, out or settings.export_dir / "priya_screen.html", answers_path)
+    answers_path, detail_path = PROJECT_ROOT / "answers.json", settings.export_dir / "answers_detail.json"
+    path = build_screen(settings, out or settings.export_dir / "priya_screen.html", answers_path, detail_path)
     print(f"Screen written to {path}")
-    print(f"Answers written to {answers_path}")
+    print(f"Answers written to {answers_path} (detail: {detail_path})")
     return 0
 
 
@@ -100,7 +100,8 @@ def _verify(settings: Settings) -> int:
     if not settings.database_path.exists():
         print(f"No database at {settings.database_path}; run `brackenfield run` first.", file=sys.stderr)
         return EXIT_BAD_INPUT
-    report = verify.run(settings.workbook_path, settings.database_path, PROJECT_ROOT / "answers.json")
+    report = verify.run(settings.workbook_path, settings.database_path, PROJECT_ROOT / "answers.json",
+                        settings.export_dir / "answers_detail.json")
     for line in report.passed:
         print(f"PASS  {line}")
     for line in report.failed:

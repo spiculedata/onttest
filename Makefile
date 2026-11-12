@@ -18,7 +18,7 @@ help:
 	@echo "make kit           start the FieldTrax kit on port $(KIT_PORT) (foreground; leave it running)"
 	@echo "make run           load the workbook and sync FieldTrax into warehouse/brackenfield.duckdb"
 	@echo "make run-workbook  load the workbook only (no FieldTrax)"
-	@echo "make screen        build Priya's screen (out/priya_screen.html) and answers.json"
+	@echo "make screen        build Priya's screen (out/priya_screen.html), answers.json and out/answers_detail.json"
 	@echo "make internal      build the internal DQ & MDM console and reports (out/internal/)"
 	@echo "make verify        cross-check DuckDB and answers.json against the workbook, independently"
 	@echo "make all           run + screen + internal + verify"
